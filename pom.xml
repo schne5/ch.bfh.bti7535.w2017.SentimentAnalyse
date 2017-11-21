@@ -13,7 +13,6 @@
             <groupId>nz.ac.waikato.cms.weka</groupId>
             <artifactId>weka-stable</artifactId>
             <version>3.8.1</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
