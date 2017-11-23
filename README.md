@@ -32,7 +32,7 @@ These instructions will get you a copy of the project up and running on your loc
 ## Authors
 
 * [schne5](https://github.com/schne5)
-* ?
+* [schea2](https://github.com/schea2)
 * [gimmie7](https://github.com/gimmie7)
 
 ## License
