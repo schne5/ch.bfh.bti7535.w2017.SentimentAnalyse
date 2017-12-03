@@ -30,12 +30,6 @@ public class Application {
 
 		System.out.println("Originale Liste: " + origWordList);
 		System.out.println("Ohne stop words: " + cleandWordList);
-	}
-        //test SentimentCounter
-        Path path = Paths.get("goldstandard\\pos", "cv000_29590.txt");
-        SentimentWordCountResult result = new SentimentWordCounter().countSentimentWords(path);
-        System.out.println("Negative: "+result.getNegativeWordCount());
-        System.out.println("Positive: "+result.getPositiveWordCount());
 
         ArffFileGenerator generator = new ArffFileGenerator(path);
         generator.addNumericAttribute("NumOfNegativeWords");
