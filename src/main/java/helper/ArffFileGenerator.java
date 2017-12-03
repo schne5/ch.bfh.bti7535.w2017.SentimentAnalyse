@@ -59,6 +59,6 @@ public class ArffFileGenerator {
        for(String value: attributeValues){
            attValues.addElement(value);
        }
-        atts.addElement(new Attribute("att2", attValues));
+        atts.addElement(new Attribute(attributeName, attValues));
     }
 }

@@ -6,6 +6,8 @@ import helper.ArffFileGenerator;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import features.SentimentWordCountResult;
@@ -34,7 +36,8 @@ public class Application {
         ArffFileGenerator generator = new ArffFileGenerator(path);
         generator.addNumericAttribute("NumOfNegativeWords");
         generator.addNumericAttribute("NumOfPositiveWords");
-        generator.addValues(new double[]{result.getNegativeWordCount(),result.getPositiveWordCount()});
+		generator.addStringAttribute("Sentiment", Arrays.asList("Negativ","Positiv"));
+        generator.addValues(new double[]{result.getNegativeWordCount(),result.getPositiveWordCount(),1});
         generator.generateFile();
     }
 }
