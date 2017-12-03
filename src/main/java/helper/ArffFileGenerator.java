@@ -29,7 +29,6 @@ public class ArffFileGenerator {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public void addValues(double[] values){
