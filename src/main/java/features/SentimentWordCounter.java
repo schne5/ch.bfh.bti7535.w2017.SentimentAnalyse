@@ -5,8 +5,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -52,7 +50,7 @@ public class SentimentWordCounter {
 
     public static HashMap<String, Integer> getSentimentList() {
         HashMap<String, Integer> sentimentList = new HashMap<String, Integer>();
-        File f = new File("C:\\Users\\elisa\\IdeaProjects\\sentimentanalyse.parent\\lexicon\\inquirerbasic.xls");
+        File f = new File("lexicon\\inquirerbasic.xls");
         FileInputStream ios = null;
 
         try {
