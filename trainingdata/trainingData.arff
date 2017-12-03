@@ -1,0 +1,7 @@
+@relation FilmReview
+
+@attribute NumOfNegativeWords numeric
+@attribute NumOfPositiveWords numeric
+
+@data
+5,6
