@@ -2,7 +2,7 @@ package features;
 
 import helper.WordStatistik;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
@@ -57,16 +57,20 @@ public class SentimentWordCounter {
             ios = new FileInputStream(f);
             HSSFWorkbook wb = new HSSFWorkbook(ios);
             Sheet sheet = wb.getSheetAt(0);
+            DataFormatter formatter = new DataFormatter(); //creating formatter using the default locale
+            
             for (Row row : sheet) {
                 if(row.getRowNum() == 0 )
                     continue;
-                Cell cell = row.getCell(0);
-                Cell posCell = row.getCell(2);
-                Cell negCell = row.getCell(3);
-                if (posCell != null && posCell.getStringCellValue().equals("Positiv"))
-                    sentimentList.put(cell.getStringCellValue(), 1);
-                if (negCell != null && negCell.getStringCellValue().equals("Negativ"))
-                    sentimentList.put(cell.getStringCellValue(), 0);
+                
+                String cell = formatter.formatCellValue(row.getCell(0));
+                String posCell = formatter.formatCellValue(row.getCell(2));
+                String negCell = formatter.formatCellValue(row.getCell(3));
+                
+                if (posCell != null && posCell.equals("Positiv"))
+                    sentimentList.put(cell, 1);
+                if (negCell != null && negCell.equals("Negativ"))
+                    sentimentList.put(cell, 0);
             }
 
         } catch (Exception e) {
