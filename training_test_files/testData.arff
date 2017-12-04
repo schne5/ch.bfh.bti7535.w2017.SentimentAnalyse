@@ -1,0 +1,27 @@
+@relation FilmReview
+
+@attribute NumOfNegativeWords numeric
+@attribute NumOfPositiveWords numeric
+@attribute Sentiment {Negativ,Positiv}
+
+@data
+4,0,Positiv
+13,0,Positiv
+10,0,Positiv
+4,0,Positiv
+7,0,Positiv
+33,0,Positiv
+16,0,Positiv
+19,0,Positiv
+4,0,Positiv
+22,0,Positiv
+37,0,Negativ
+16,0,Negativ
+10,0,Negativ
+14,0,Negativ
+7,0,Negativ
+13,0,Negativ
+3,0,Negativ
+23,0,Negativ
+11,0,Negativ
+10,0,Negativ10,7,Negativ

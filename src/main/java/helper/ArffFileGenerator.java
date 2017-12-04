@@ -8,7 +8,6 @@ import weka.core.Instances;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 
@@ -18,13 +17,13 @@ public class ArffFileGenerator {
     Instances  data;
     double[]   vals;
 
-    public ArffFileGenerator(Path p){
-        this.path =p;
+    public ArffFileGenerator(Path path){
+        this.path = path;
         this.atts = new FastVector();
     }
-    public  void generateFile(){
+    public  void generateFile(String filename){
         try {
-            Files.write( Paths.get("trainingdata\\"+"trainingData.arff"), data.toString().getBytes(), StandardOpenOption.CREATE);
+            Files.write( path.resolve(filename), data.toString().getBytes(), StandardOpenOption.CREATE);
         } catch (IOException e) {
             e.printStackTrace();
         }

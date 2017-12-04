@@ -11,12 +11,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import features.SentimentWordCountResult;
-import features.SentimentWordCounter;
 import features.StopWordElimination;
 import helper.FileToList;
 
 public class Application {
+	private final static String PATH_GOLDSTANDARD = "goldstandard";
+	private final static String PATH_POSITIVE = PATH_GOLDSTANDARD + "\\pos";
+	private final static String PATH_NEGATIVE = PATH_GOLDSTANDARD + "\\neg";
+	private final static String PATH_TRAINING_TEST_FILES = "training_test_files";
+	
 	public static void main(String[] args) {
 		// test stop words elimination
 		Path pathTestFile = Paths.get("goldstandard\\pos", "cv000_29590.txt");
@@ -27,29 +30,41 @@ public class Application {
 		System.out.println("Originale Liste: " + origWordList);
 		System.out.println("Ohne stop words: " + cleandWordList);
 
-        ArffFileGenerator generator = new ArffFileGenerator(Paths.get("trainingdata"));
-        generator.addNumericAttribute("NumOfNegativeWords");
-        generator.addNumericAttribute("NumOfPositiveWords");
-		generator.addStringAttribute("Sentiment", Arrays.asList("Negativ","Positiv"));
+		SentimentWordCounter sentimentWordCounter = new SentimentWordCounter();
+        ArffFileGenerator trainingDataGenerator = createGenerator();
+        ArffFileGenerator testDataGenerator = createGenerator();
         
-        List<String> filesPositive = readAllFiles("goldstandard\\pos");
-        List<String> filesNegative = readAllFiles("goldstandard\\neg");
+        List<String> filesPositive = readAllFiles(PATH_POSITIVE);
+        List<String> filesNegative = readAllFiles(PATH_NEGATIVE);
         
-        String pathPositive = "goldstandard\\pos";
-        String pathNegative = "goldstandard\\neg";
+        insertFeature(trainingDataGenerator, sentimentWordCounter, filesPositive, true, 0, 100, false);
+        insertFeature(trainingDataGenerator, sentimentWordCounter, filesNegative, false, 0, 100, false);
         
-        SentimentWordCounter sentimentWordCounter = new SentimentWordCounter();
+        insertFeature(testDataGenerator, sentimentWordCounter, filesPositive, true, 100, 110, true);
+        insertFeature(testDataGenerator, sentimentWordCounter, filesNegative, false, 100, 110, true);
         
-        insertFeature(generator, sentimentWordCounter, pathPositive, filesPositive, true);
-        insertFeature(generator, sentimentWordCounter, pathNegative, filesNegative, false);
-        
-        generator.generateFile();
+        trainingDataGenerator.generateFile("trainingData.arff");
+        testDataGenerator.generateFile("testData.arff");
     }
 	
-	private static void insertFeature(ArffFileGenerator generator, SentimentWordCounter sentimentWordCounter, String pathPositive, List<String> filesPositive, boolean positive) {
-		for (int i = 0; i < 10; i++) {
-        	SentimentWordCountResult result = sentimentWordCounter.countSentimentWords(Paths.get(pathPositive, filesPositive.get(i)));
+	private static ArffFileGenerator createGenerator() {
+		ArffFileGenerator generator = new ArffFileGenerator(Paths.get(PATH_TRAINING_TEST_FILES));
+        generator.addNumericAttribute("NumOfNegativeWords");
+        generator.addNumericAttribute("NumOfPositiveWords");
+		generator.addStringAttribute("Sentiment", Arrays.asList("Negativ", "Positiv"));
+		
+		return generator;
+	}
+	
+	/*
+	 * TODO: add question mark instead of Positiv/Negativ if isTestData is true
+	 * Maybe we should use the ArffSaver class rather than generating .arff files by ourselfes? see https://weka.wikispaces.com/Save+Instances+to+an+ARFF+File 
+	 */
+	private static void insertFeature(ArffFileGenerator generator, SentimentWordCounter sentimentWordCounter, List<String> files, boolean positive, int rangeFrom, int rangeTo, boolean isTestData) {
+		for (int i = rangeFrom; i < rangeTo; i++) {
+        	SentimentWordCountResult result = sentimentWordCounter.countSentimentWords(Paths.get(positive ? PATH_POSITIVE : PATH_NEGATIVE, files.get(i)));
         	generator.addValues(new double[]{result.getNegativeWordCount(), result.getPositiveWordCount(), positive ? 1 : 0});
+//        	generator.addValues(new double[]{result.getNegativeWordCount(), result.getPositiveWordCount(), isTestData ? "?" : positive ? 1 : 0});
         }
 	}
 	
