@@ -16,11 +16,11 @@ import java.util.List;
 
 public class SentimentWordCounter {
     HashMap<String, Integer> sentimentWords;
-    public  SentimentWordCountResult countSentimentWords(Path p) {
+    public  SentimentWordCountResult countSentimentWords(Path path) {
         int posCount = 0;
         int negCount = 0;
         try {
-            List<String> lines = Files.readAllLines(p);
+            List<String> lines = Files.readAllLines(path);
             HashMap<String, Integer> wordMap = splitText(lines);
             if(sentimentWords == null)
                 sentimentWords = getSentimentList();

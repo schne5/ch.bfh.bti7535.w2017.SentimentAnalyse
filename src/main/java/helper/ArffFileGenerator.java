@@ -23,7 +23,6 @@ public class ArffFileGenerator {
         this.atts = new FastVector();
     }
     public  void generateFile(){
-        System.out.println(data);
         try {
             Files.write( Paths.get("trainingdata\\"+"trainingData.arff"), data.toString().getBytes(), StandardOpenOption.CREATE);
         } catch (IOException e) {
