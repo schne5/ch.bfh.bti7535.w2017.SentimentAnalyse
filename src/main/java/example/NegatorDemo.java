@@ -2,6 +2,8 @@ package example;
 
 import java.io.IOException;
 
+import features.Negator;
+
 public class NegatorDemo {
 
 	public static void main(String[] args) throws IOException {
