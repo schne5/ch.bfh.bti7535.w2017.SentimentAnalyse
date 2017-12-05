@@ -16,7 +16,7 @@ public class NaiveBayesClassifier {
     public void train() {
         try {
             //Trainingsdaten laden
-            trainingData = getData("/trainingdata/trainingData.arff");
+            trainingData = getData(FeatureExtractor.PATH_TRAINING_TEST_FILES +"/"+FeatureExtractor.FILE_NAME_TRAINING);
             //Class Attribut setzen (das letzte)
             trainingData.setClassIndex(trainingData.numAttributes() - 1);
             naiveBayes = new NaiveBayes();
@@ -28,7 +28,8 @@ public class NaiveBayesClassifier {
 
     public void test() {
         try {
-            testData = getData("/testdata/testData.arff");
+            int fehler =0;
+            testData = getData(FeatureExtractor.PATH_TRAINING_TEST_FILES +"/"+FeatureExtractor.FILE_NAME_TEST);
             testData.setClassIndex(testData.numAttributes() - 1);
             for (int i = 0; i < testData.numInstances(); i++) {
                 System.out.println(testData.instance(i));
@@ -36,8 +37,15 @@ public class NaiveBayesClassifier {
 
                 index = naiveBayes.classifyInstance(testData.instance(i));
                 String className = trainingData.classAttribute().value((int) index);
+                if(index > 0 && i >= testData.numInstances() /2 )
+                    fehler ++;
+                if(index == 0 && i < testData.numInstances() /2 )
+                    fehler ++;
                 System.out.println(className);
             }
+            System.out.println("Anzahl Fehler: " +fehler);
+            System.out.println("Anzahl Total: " +testData.numInstances());
+            System.out.println("Richtig: " +((double)(((double)testData.numInstances()-(double)fehler)/(double)testData.numInstances()) * (double)100) + "%");
         } catch(Exception e){
             e.printStackTrace();
         }
