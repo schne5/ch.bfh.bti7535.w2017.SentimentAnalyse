@@ -23,7 +23,7 @@ public class ArffFileGenerator {
     }
     public  void generateFile(String filename){
         try {
-            Files.write( path.resolve(filename), data.toString().getBytes(), StandardOpenOption.CREATE);
+            Files.write(path.resolve(filename), data.toString().getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }
