@@ -51,7 +51,7 @@ public class NaiveBayesClassifier {
         }
     }
 
-    public static Instances getData(String fileName) throws IOException {
+    private static Instances getData(String fileName) throws IOException {
         BufferedReader reader = null;
         Instances data = null;
         try {

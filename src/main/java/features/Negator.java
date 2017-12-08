@@ -1,6 +1,7 @@
 package features;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,20 +10,29 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+// TODO: include brackets as well
 public class Negator {
 	private static final Logger LOGGER = Logger.getLogger( Negator.class.getName() );
 	
-	static List<String> negations = new ArrayList<String>(Arrays.asList("n't", "not"));
-	static List<Character> punctuations = new ArrayList<Character>(Arrays.asList('.', '.', ',', '?', '!', ';'));
+	private List<String> negations;
+	private List<Character> punctuations;
 	
-	public static void process(String fileName) throws IOException {
+	public Negator() {
+		this.negations = new ArrayList<String>(Arrays.asList("n't", "not"));
+		this.punctuations =  new ArrayList<Character>(Arrays.asList('.', '.', ',', '?', '!', ';'));
+	}
+	
+	public NegatorResult executeNegation(File file) throws IOException {
+		NegatorResult result = new NegatorResult();
+		StringBuilder sb = new StringBuilder();
+		BufferedReader reader = null;
+		
 		Boolean addNotPrefix = false;
 		Boolean isNegation = false;
 		Boolean isPunctuation = false;
 		
-		BufferedReader reader = null;
 		try {
-			reader = new BufferedReader(new FileReader(fileName));
+			reader = new BufferedReader(new FileReader(file));
 			
 			String line = reader.readLine();
 	
@@ -37,18 +47,21 @@ public class Negator {
 					else if (word.endsWith(negations.get(0)) || word.endsWith(negations.get(1))) {
 						isPunctuation = false;
 						isNegation = true;
+						result.incrementTotalWordCount();
+					} else {
+						result.incrementTotalWordCount();
 					}
 					
 					if (addNotPrefix) {
-						System.out.print("NOT_");	
+						sb.append("NOT_");	
+						result.incrementNegatedWordCount();
 					}
 					
-					System.out.print(word + " ");
+					sb.append(word + " ");
 					
 					addNotPrefix = isNegation && !isPunctuation; 
 				}
 				
-				System.out.println("");
 				line = reader.readLine();
 		    }
 		} catch(Exception ex) {
@@ -56,5 +69,9 @@ public class Negator {
 		} finally {
 			reader.close();
 		}
+		
+		result.setOutput(sb.toString());
+		
+		return result;
 	}
 }
