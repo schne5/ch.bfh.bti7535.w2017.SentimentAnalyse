@@ -22,7 +22,9 @@ public class Application {
 		System.out.println("Originale Liste: " + origWordList);
 		System.out.println("Ohne stop words: " + cleandWordList);
 
-		FeatureExtractor.extractFeatures();
+		FeatureExtractor featureExtractor = new FeatureExtractor();
+		featureExtractor.extractFeatures();
+		
 		NaiveBayesClassifier naiveBayesClassifier = new NaiveBayesClassifier();
 		naiveBayesClassifier.train();
 		naiveBayesClassifier.test();

@@ -13,47 +13,73 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class FeatureExtractor {
+	private static final Logger LOGGER = Logger.getLogger( FeatureExtractor.class.getName() );
+	
+	ArffFileGenerator trainingDataGenerator;
+    ArffFileGenerator testDataGenerator;
+	
+	List<String> filesPositive;
+	List<String> filesNegative;
+	
+	SentimentWordCounter sentimentWordCounter;
+    Negator negator;
+	
+	public FeatureExtractor() {
+		trainingDataGenerator = createGenerator();
+		testDataGenerator = createGenerator();
+		
+		filesPositive = readAllFiles(Constants.PATH_POSITIVE);
+		filesNegative = readAllFiles(Constants.PATH_NEGATIVE);
+		
+		// features
+		sentimentWordCounter = new SentimentWordCounter();
+        negator = new Negator();
+	}
 
-    public static void extractFeatures(){
-        SentimentWordCounter sentimentWordCounter = new SentimentWordCounter();
-        Negator negator = new Negator();
-        
-        ArffFileGenerator trainingDataGenerator = createGenerator();
-        ArffFileGenerator testDataGenerator = createGenerator();
+    public void extractFeatures(){
+        insertFeature(true, 0, 500, false);
+        insertFeature(false, 0, 500, false);
 
-        List<String> filesPositive = readAllFiles(Constants.PATH_POSITIVE);
-        List<String> filesNegative = readAllFiles(Constants.PATH_NEGATIVE);
-
-        insertFeature(trainingDataGenerator, sentimentWordCounter, negator, filesPositive, true, 0, 500, false);
-        insertFeature(trainingDataGenerator, sentimentWordCounter, negator, filesNegative, false, 0, 500, false);
-
-        insertFeature(testDataGenerator, sentimentWordCounter, negator, filesPositive, true, 500, 600, true);
-        insertFeature(testDataGenerator, sentimentWordCounter, negator, filesNegative, false, 500, 600, true);
+        insertFeature(true, 500, 600, true);
+        insertFeature(false, 500, 600, true);
 
         trainingDataGenerator.generateFile(Constants.FILE_NAME_TRAINING);
         testDataGenerator.generateFile(Constants.FILE_NAME_TEST);
     }
 
-    private static void insertFeature(ArffFileGenerator generator, SentimentWordCounter sentimentWordCounter, Negator negator, List<String> files, boolean positive, int rangeFrom, int rangeTo, boolean isTestData) {
+    private void insertFeature(boolean positive, int rangeFrom, int rangeTo, boolean isTestData) {
         for (int i = rangeFrom; i < rangeTo; i++) {
         	SentimentWordCountResult sentimentResult = null;
         	NegatorResult negatorResult = null;
         	
 			try {
-				List<String> input = Files.readAllLines(Paths.get(positive ? Constants.PATH_POSITIVE : Constants.PATH_NEGATIVE, files.get(i)));
+				List<String> input;
+				
+				if (positive) {
+					input = Files.readAllLines(Paths.get(Constants.PATH_POSITIVE, filesPositive.get(i)));
+				} else {
+					input = Files.readAllLines(Paths.get(Constants.PATH_NEGATIVE, filesNegative.get(i)));
+				}
+				
 				sentimentResult = sentimentWordCounter.countSentimentWords(input);
 	            negatorResult = negator.executeNegation(input);
 			} catch (IOException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, e.toString());
 			}
             
-            generator.addValues(new double[]{sentimentResult.getNegativeWordCount(), sentimentResult.getPositiveWordCount(), negatorResult.getNegatedWordWeight(), isTestData ? Instance.missingValue() : positive ? 1 : 0});
+			if (isTestData) {
+				testDataGenerator.addValues(new double[]{sentimentResult.getNegativeWordCount(), sentimentResult.getPositiveWordCount(), negatorResult.getNegatedWordWeight(), Instance.missingValue()});	
+			} else {
+				trainingDataGenerator.addValues(new double[]{sentimentResult.getNegativeWordCount(), sentimentResult.getPositiveWordCount(), negatorResult.getNegatedWordWeight(), positive ? 1 : 0});
+			}
         }
     }
     
-    private static ArffFileGenerator createGenerator() {
+    private ArffFileGenerator createGenerator() {
         ArffFileGenerator generator = new ArffFileGenerator(Paths.get(Constants.PATH_TRAINING_TEST_FILES));
         generator.addNumericAttribute("NumOfNegativeWords");
         generator.addNumericAttribute("NumOfPositiveWords");
@@ -63,7 +89,7 @@ public class FeatureExtractor {
         return generator;
     }
     
-    private static List<String> readAllFiles(String path) {
+    private List<String> readAllFiles(String path) {
         File folder = new File(path);
         File[] files = folder.listFiles();
         List<String> fileNames = new ArrayList<String>();

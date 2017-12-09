@@ -58,8 +58,8 @@ public class Negator {
 					addNotPrefix = isNegation && !isPunctuation; 
 				}
 		    }
-		} catch(Exception ex) {
-			LOGGER.log(Level.SEVERE, ex.toString());
+		} catch(Exception e) {
+			LOGGER.log(Level.SEVERE, e.toString());
 		}
 		
 		result.setOutput(sb.toString());
