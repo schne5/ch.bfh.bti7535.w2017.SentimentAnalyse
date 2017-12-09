@@ -8,35 +8,30 @@ import org.apache.poi.ss.usermodel.Sheet;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 
 public class SentimentWordCounter {
     HashMap<String, Integer> sentimentWords;
-    public  SentimentWordCountResult countSentimentWords(Path path) {
+    public SentimentWordCountResult countSentimentWords(List<String> input) {
         int posCount = 0;
         int negCount = 0;
-        try {
-            List<String> lines = Files.readAllLines(path);
-            HashMap<String, Integer> wordMap = splitText(lines);
-            if(sentimentWords == null)
-                sentimentWords = getSentimentList();
+        	
+        HashMap<String, Integer> wordMap = splitText(input);
+        if (sentimentWords == null) {
+            sentimentWords = getSentimentList();
+        }
 
-            for (String word : wordMap.keySet()) {
-                if (sentimentWords.containsKey(word)){
-                    if(sentimentWords.get(word) == 0){
-                        negCount = negCount + wordMap.get(word);
-                    }else{
-                        posCount = posCount + wordMap.get(word);
-                    }
+        for (String word : wordMap.keySet()) {
+            if (sentimentWords.containsKey(word)) {
+                if (sentimentWords.get(word) == 0) {
+                    negCount = negCount + wordMap.get(word);
+                } else {
+                    posCount = posCount + wordMap.get(word);
                 }
             }
-        } catch (IOException e) {
-            System.out.println("File not available");
         }
+        
         return new SentimentWordCountResult(posCount, negCount);
     }
 

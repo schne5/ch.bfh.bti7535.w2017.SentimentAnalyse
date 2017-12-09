@@ -10,7 +10,6 @@ import helper.FileToList;
 import helper.NaiveBayesClassifier;
 
 public class Application {
-	private final static String PATH_GOLDSTANDARD = "goldstandard";
 	
 	public static void main(String[] args) {
 		// test stop words elimination

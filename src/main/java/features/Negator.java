@@ -1,8 +1,5 @@
 package features;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,23 +19,22 @@ public class Negator {
 		this.punctuations =  new ArrayList<Character>(Arrays.asList('.', '.', ',', '?', '!', ';'));
 	}
 	
-	public NegatorResult executeNegation(File file) throws IOException {
+	public NegatorResult executeNegation(List<String> input) throws IOException {
 		NegatorResult result = new NegatorResult();
 		StringBuilder sb = new StringBuilder();
-		BufferedReader reader = null;
 		
 		Boolean addNotPrefix = false;
 		Boolean isNegation = false;
 		Boolean isPunctuation = false;
 		
 		try {
-			reader = new BufferedReader(new FileReader(file));
-			
-			String line = reader.readLine();
-	
-		    while (line != null) {
+		    for (String line : input) {
 		        String[] words = line.split(" ");
 				for (String word : words) {
+					if (word.length() == 0) {
+						continue;
+					}
+					
 					if (punctuations.contains(word.charAt(word.length() -1))) {
 						isPunctuation = true;
 						isNegation = false;
@@ -61,13 +57,9 @@ public class Negator {
 					
 					addNotPrefix = isNegation && !isPunctuation; 
 				}
-				
-				line = reader.readLine();
 		    }
 		} catch(Exception ex) {
 			LOGGER.log(Level.SEVERE, ex.toString());
-		} finally {
-			reader.close();
 		}
 		
 		result.setOutput(sb.toString());

@@ -46,7 +46,7 @@ public class NegatorResult {
 		this.totalWordCount++;
 	}
 	
-	public double getNegatedWordPercentage() {
+	public double getNegatedWordWeight() {
 		if (negatedWordCount == 0) {
 			return 1;
 		}
@@ -55,6 +55,6 @@ public class NegatorResult {
 			return 0;
 		}
 		
-		return (double)negatedWordCount / (double)totalWordCount;
+		return (double)(negatedWordCount * 5) / (double)totalWordCount; // multiply by factor 5 for higher accuracy
 	}
 }
