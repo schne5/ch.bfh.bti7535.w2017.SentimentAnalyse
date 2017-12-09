@@ -15,7 +15,7 @@ public class Negator {
 	private List<Character> punctuations;
 	
 	public Negator() {
-		this.negations = new ArrayList<String>(Arrays.asList("n't", "not"));
+		this.negations = new ArrayList<String>(Arrays.asList("n't", "not", "no", "never"));
 		this.punctuations =  new ArrayList<Character>(Arrays.asList('.', '.', ',', '?', '!', ';'));
 	}
 	
