@@ -38,11 +38,14 @@ public class TF_IDF {
       Result is a HashMap with words as key and document frequency count as values
     */
     private void generateVocabularyList(){
+        int success = 0;
+        int notSuccess = 0;
         for(String file: files.keySet()) {
             try {
                 //Read File content
-                List<String> lines = Files.readAllLines(Paths.get(files.get(file) ? Constants.PATH_POSITIVE : Constants.PATH_POSITIVE, file));
+                List<String> lines = Files.readAllLines(Paths.get(files.get(file) ? Constants.PATH_POSITIVE : Constants.PATH_NEGATIVE, file));
                 List<String> words = WordStatistik.getWords(lines);
+                success ++;
                 //Remove stop words
                 words = StopWordElimination.removeStopWords(words);
                 //TODO: Here perhaps negation feature
@@ -67,18 +70,21 @@ public class TF_IDF {
                 }
                 wordStatistikDocument.put(file, wordStatistik);
             } catch (IOException e) {
-                e.printStackTrace();
+                notSuccess ++;
+                // e.printStackTrace();
             }
         }
+        System.out.println(success + " " + notSuccess);
         //Remove all the words not in definded range
         for (Iterator<String> iter = vocabularyList.keySet().iterator(); iter.hasNext(); ) {
             String word = iter.next();
             Integer value = vocabularyList.get(word);
             if(value < min_df)
-                vocabularyList.remove(word);
+                iter.remove();
             //remove words that occurs more than max_df multiplied by num of files
             if(value > (max_df * numOfDocuments))
-                vocabularyList.remove(word);
+                iter.remove();
+                // vocabularyList.remove(word);
         }
     }
     /*
