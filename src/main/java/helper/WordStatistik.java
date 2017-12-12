@@ -1,6 +1,8 @@
 package helper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class WordStatistik {
@@ -39,5 +41,21 @@ public class WordStatistik {
             preword = word.toUpperCase();
         }
         return wordMap;
+    }
+    public static List<String> getWords(List<String> lines){
+        List<String> words = new ArrayList<String>();
+        StringTokenizer tokenizer = new StringTokenizer(splitText(lines),"\n\"-+,&%$§.;:?!(){}[]1234567890*@ ");
+        while(tokenizer.hasMoreTokens()) {
+            String word = tokenizer.nextToken();
+            words.add(word);
+        }
+        return words;
+    }
+
+    public static String splitText(List<String> lines) {
+        StringBuilder text = new StringBuilder();
+        for (String line : lines)
+            text.append(line);
+        return text.toString();
     }
 }

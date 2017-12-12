@@ -1,9 +1,6 @@
 package helper;
 
-import features.Negator;
-import features.NegatorResult;
-import features.SentimentWordCountResult;
-import features.SentimentWordCounter;
+import features.*;
 import weka.core.Instance;
 
 import java.io.File;
@@ -12,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,20 +22,30 @@ public class FeatureExtractor {
 	
 	List<String> filesPositive;
 	List<String> filesNegative;
+	HashMap<String,Boolean> fileList = new HashMap<String,Boolean>();
 	
 	SentimentWordCounter sentimentWordCounter;
+	TF_IDF tf_idf;
     Negator negator;
 	
 	public FeatureExtractor() {
-		trainingDataGenerator = createGenerator();
-		testDataGenerator = createGenerator();
-		
 		filesPositive = readAllFiles(Constants.PATH_POSITIVE);
 		filesNegative = readAllFiles(Constants.PATH_NEGATIVE);
-		
+		for (String negFile: filesNegative){
+		   fileList.put(negFile,false) ;
+        }
+        for (String posFile: filesPositive){
+            fileList.put(posFile,true) ;
+        }
 		// features
 		sentimentWordCounter = new SentimentWordCounter();
+
+
+        tf_idf = new TF_IDF(fileList,0.8,4);
         negator = new Negator();
+
+        trainingDataGenerator = createGenerator();
+        testDataGenerator = createGenerator();
 	}
 
     public void extractFeatures(){
@@ -55,14 +63,17 @@ public class FeatureExtractor {
         for (int i = rangeFrom; i < rangeTo; i++) {
         	SentimentWordCountResult sentimentResult = null;
         	NegatorResult negatorResult = null;
-        	
+            HashMap<String, Double> vector = null;
+
 			try {
 				List<String> input;
 				
 				if (positive) {
 					input = Files.readAllLines(Paths.get(Constants.PATH_POSITIVE, filesPositive.get(i)));
+					vector = tf_idf.generateVectorTraining(filesPositive.get(i));
 				} else {
 					input = Files.readAllLines(Paths.get(Constants.PATH_NEGATIVE, filesNegative.get(i)));
+                    vector = tf_idf.generateVectorTraining(filesNegative.get(i));
 				}
 				
 				sentimentResult = sentimentWordCounter.countSentimentWords(input);
@@ -70,11 +81,22 @@ public class FeatureExtractor {
 			} catch (IOException e) {
 				LOGGER.log(Level.SEVERE, e.toString());
 			}
-            
+
+			int vocabularyCount = tf_idf.getVocabularyList().keySet().size() + 3;
+			double[] values = new double[vocabularyCount];
+			values[0] = sentimentResult.getNegativeWordCount();
+            values[1] = sentimentResult.getPositiveWordCount();
+            values[2] = negatorResult.getNegatedWordWeight();
+            int k = 3;
+            for (String word : vector.keySet()) {
+                values[k] = vector.get(word);
+                k++;
+            }
+
 			if (isTestData) {
-				testDataGenerator.addValues(new double[]{sentimentResult.getNegativeWordCount(), sentimentResult.getPositiveWordCount(), negatorResult.getNegatedWordWeight(), Instance.missingValue()});	
+				testDataGenerator.addValues(values);
 			} else {
-				trainingDataGenerator.addValues(new double[]{sentimentResult.getNegativeWordCount(), sentimentResult.getPositiveWordCount(), negatorResult.getNegatedWordWeight(), positive ? 1 : 0});
+				trainingDataGenerator.addValues(values);
 			}
         }
     }
@@ -85,6 +107,10 @@ public class FeatureExtractor {
         generator.addNumericAttribute("NumOfPositiveWords");
         generator.addNumericAttribute("NumOfNegatedWords");
         generator.addStringAttribute("Sentiment", Arrays.asList("Negativ", "Positiv"));
+
+        for (String word : tf_idf.getVocabularyList().keySet()) {
+            generator.addNumericAttribute(word);
+        }
 
         return generator;
     }
