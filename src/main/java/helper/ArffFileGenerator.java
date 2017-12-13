@@ -36,7 +36,7 @@ public class ArffFileGenerator {
             return;
         }
         vals = new double[data.numAttributes()];
-        for(int i =0; i<vals.length -1; i++){
+        for(int i =0; i<vals.length; i++){
             vals[i] = values[i];
         }
         data.add(new Instance(1.0, vals));

@@ -16,7 +16,10 @@ import java.util.logging.Logger;
 
 public class FeatureExtractor {
 	private static final Logger LOGGER = Logger.getLogger( FeatureExtractor.class.getName() );
-	
+	int rangeFromTraining=0;
+	int rangeToTraining = 500;
+	int rangeFromTest=500;
+	int rangeToTest=600;
 	ArffFileGenerator trainingDataGenerator;
     ArffFileGenerator testDataGenerator;
 	
@@ -31,17 +34,25 @@ public class FeatureExtractor {
 	public FeatureExtractor() {
 		filesPositive = readAllFiles(Constants.PATH_POSITIVE);
 		filesNegative = readAllFiles(Constants.PATH_NEGATIVE);
-		for (String negFile: filesNegative){
+		for(int i=rangeFromTraining; i < rangeToTraining;i++){
+		    String negFile =filesNegative.get(i);
+            fileList.put(negFile,false) ;
+        }
+        for(int i=rangeFromTraining; i < rangeToTraining;i++){
+            String posFile =filesPositive.get(i);
+            fileList.put(posFile,true) ;
+        }
+		/*for (String negFile: filesNegative){
 		   fileList.put(negFile,false) ;
         }
         for (String posFile: filesPositive){
             fileList.put(posFile,true) ;
-        }
+        }*/
 		// features
 		sentimentWordCounter = new SentimentWordCounter();
 
 
-        tf_idf = new TF_IDF(fileList,0.8,4);
+        tf_idf = new TF_IDF(fileList,0.8,11);
         negator = new Negator();
 
         trainingDataGenerator = createGenerator();
@@ -49,11 +60,11 @@ public class FeatureExtractor {
 	}
 
     public void extractFeatures(){
-        insertFeature(true, 0, 500, false);
-        insertFeature(false, 0, 500, false);
+        insertFeature(true, rangeFromTraining, rangeToTraining, false);
+        insertFeature(false, rangeFromTraining, rangeToTraining, false);
 
-        insertFeature(true, 500, 600, true);
-        insertFeature(false, 500, 600, true);
+        insertFeature(true, rangeFromTest, rangeToTest, true);
+        insertFeature(false, rangeFromTest, rangeToTest, true);
 
         trainingDataGenerator.generateFile(Constants.FILE_NAME_TRAINING);
         testDataGenerator.generateFile(Constants.FILE_NAME_TEST);
@@ -70,10 +81,10 @@ public class FeatureExtractor {
 				
 				if (positive) {
 					input = Files.readAllLines(Paths.get(Constants.PATH_POSITIVE, filesPositive.get(i)));
-					vector = tf_idf.generateVectorTraining(filesPositive.get(i));
+					vector = !isTestData ?tf_idf.generateVectorTraining(filesPositive.get(i)) : tf_idf.generateTestVector(filesPositive.get(i),true);
 				} else {
 					input = Files.readAllLines(Paths.get(Constants.PATH_NEGATIVE, filesNegative.get(i)));
-                    vector = tf_idf.generateVectorTraining(filesNegative.get(i));
+                    vector = !isTestData ? tf_idf.generateVectorTraining(filesNegative.get(i)) : tf_idf.generateTestVector(filesNegative.get(i),false);
 				}
 				
 				sentimentResult = sentimentWordCounter.countSentimentWords(input);
@@ -82,7 +93,7 @@ public class FeatureExtractor {
 				LOGGER.log(Level.SEVERE, e.toString());
 			}
 
-			int vocabularyCount = tf_idf.getVocabularyList().keySet().size() + 3;
+			int vocabularyCount = tf_idf.getVocabularyList().keySet().size() + 4;
 			double[] values = new double[vocabularyCount];
 			values[0] = sentimentResult.getNegativeWordCount();
             values[1] = sentimentResult.getPositiveWordCount();
@@ -92,6 +103,8 @@ public class FeatureExtractor {
                 values[k] = vector.get(word);
                 k++;
             }
+            values[k]= !isTestData ? (positive ? 1 : 0) : Instance.missingValue();
+            //System.out.println(values[k]);
 
 			if (isTestData) {
 				testDataGenerator.addValues(values);

@@ -101,7 +101,8 @@ public class TF_IDF {
         HashMap<String, Integer> wordStatistik = new HashMap<String, Integer>();
         try {
             //Read file content
-            List<String> words = Files.readAllLines(Paths.get(positive ?Constants.PATH_POSITIVE : Constants.PATH_NEGATIVE, filename));
+            List<String> lines = Files.readAllLines(Paths.get(positive ?Constants.PATH_POSITIVE : Constants.PATH_NEGATIVE, filename));
+            List<String> words = WordStatistik.getWords(lines);
             //Remove stop words
             words = StopWordElimination.removeStopWords(words);
             //Generate word frequency List
