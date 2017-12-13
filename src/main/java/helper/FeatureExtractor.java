@@ -106,11 +106,12 @@ public class FeatureExtractor {
         generator.addNumericAttribute("NumOfNegativeWords");
         generator.addNumericAttribute("NumOfPositiveWords");
         generator.addNumericAttribute("NumOfNegatedWords");
-        generator.addStringAttribute("Sentiment", Arrays.asList("Negativ", "Positiv"));
 
         for (String word : tf_idf.getVocabularyList().keySet()) {
             generator.addNumericAttribute(word);
         }
+        
+        generator.addStringAttribute("Sentiment", Arrays.asList("Negativ", "Positiv"));
 
         return generator;
     }
