@@ -38,16 +38,12 @@ public class TF_IDF {
       Result is a HashMap with words as key and document frequency count as values
     */
     private void generateVocabularyList(){
-        int success = 0;
-        int notSuccess = 0;
         for(String file: files.keySet()) {
             try {
                 //Read File content
                 List<String> lines = Files.readAllLines(Paths.get(files.get(file) ? Constants.PATH_POSITIVE : Constants.PATH_NEGATIVE, file));
                 List<String> words = WordStatistik.getWords(lines);
-                success ++;
                 //Remove stop words
-                words = StopWordElimination.removeStopWords(words);
                 //TODO: Here perhaps negation feature
                 //List with frequency of each word
                 HashMap<String, Integer> wordStatistik = new HashMap<String, Integer>();
@@ -66,15 +62,14 @@ public class TF_IDF {
                         wordStatistik.put(word, 1);
                     }
                     Integer count = wordStatistik.get(word);
-                    wordStatistik.put(word, count++);
+                    count++;
+                    wordStatistik.put(word, count);
                 }
                 wordStatistikDocument.put(file, wordStatistik);
             } catch (IOException e) {
-                notSuccess ++;
                 // e.printStackTrace();
             }
         }
-        System.out.println(success + " " + notSuccess);
         //Remove all the words not in definded range
         for (Iterator<String> iter = vocabularyList.keySet().iterator(); iter.hasNext(); ) {
             String word = iter.next();
@@ -147,12 +142,14 @@ public class TF_IDF {
         HashMap<String, Double> wordVector = new HashMap<String, Double>();
         for (String key : vocabularyList.keySet()) {
             if (wordStatistik.containsKey(key)) {
-                double tf = Math.log(wordStatistik.get(key));
-                double idf = (double) (numOfDocuments / vocabularyList.get(key));
+                double value = (double)wordStatistik.get(key);
+                double tf = Math.log10(1+value);
+                double idf = (double) ((double)numOfDocuments / (double)vocabularyList.get(key));
                 double tf_idf = tf * idf;
                 wordVector.put(key, tf_idf);
+            }else{
+                wordVector.put(key, 0.0);
             }
-            wordVector.put(key, 0.0);
         }
         return wordVector;
     }
