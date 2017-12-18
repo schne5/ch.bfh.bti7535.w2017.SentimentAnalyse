@@ -1,60 +1,86 @@
 package helper;
 
 import weka.core.Attribute;
-import weka.core.FastVector;
-import weka.core.Instance;
+import weka.core.DenseInstance;
 import weka.core.Instances;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ArffFileGenerator {
-    private Path path;
-    private  FastVector atts;
-    Instances  data;
-    double[]   vals;
 
-    public ArffFileGenerator(Path path){
-        this.path = path;
-        this.atts = new FastVector();
-    }
-    public  void generateFile(String filename){
-        try {
-            Files.write(path.resolve(filename), data.toString().getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+	public static void writeFile(String filename, Instances instances) {
+		try {
+			Files.write(Paths.get(Constants.PATH_TRAINING_TEST_FILES, filename), instances.toString().getBytes());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
-    public void addValues(double[] values){
-        if(data == null)
-            data = new Instances("FilmReview", atts, 0);
-        if(values.length > data.numAttributes()){
-            System.out.println("More values than attributes");
-            return;
-        }
-        vals = new double[data.numAttributes()];
-        for(int i =0; i<vals.length; i++){
-            vals[i] = values[i];
-        }
-        data.add(new Instance(1.0, vals));
-    }
+	public static void generateFile() throws IOException {
+		ArrayList<Attribute> attributes = new ArrayList<Attribute>(); 
+        ArrayList<String> classValues = new ArrayList<String>(); 
+        classValues.add("pos"); 
+        classValues.add("neg"); 
+        
+        Attribute sentiment = new Attribute("sentiment", classValues); 
+        Attribute text = new Attribute("text", (ArrayList<String>) null); 
+ 
+        attributes.add(sentiment); 
+        attributes.add(text); 
+ 
+        //build training data 
+        Instances instances = new Instances("Film Review", attributes, 1); 
+        DenseInstance instance; 
+		
+		List<String> filesPositive = readAllFileNames(Constants.PATH_POSITIVE);
+		List<String> filesNegative = readAllFileNames(Constants.PATH_NEGATIVE);
 
-    public void addNumericAttribute(String attributeName){
-        atts.addElement(new Attribute(attributeName));
-    }
+		for (String file : filesPositive) {
+			String content = getContentFromFile(file, true);
+			instance = new DenseInstance(2); 
+			instance.setValue(attributes.get(0), classValues.get(0));
+			instance.setValue((Attribute) attributes.get(1), content); 
+			instances.add(instance); 
+		}
+		
+		for (String file : filesNegative) {
+			String content = getContentFromFile(file, false);
+			content += ", neg";
+			instance = new DenseInstance(2); 
+			instance.setValue(attributes.get(0), classValues.get(1));
+            instance.setValue((Attribute) attributes.get(1), content); 
+            instances.add(instance); 
+		}
+		
+		writeFile("trainingData.arff", instances);
+	}
 
-    public void addStringAttribute(String attributeName){
-        atts.addElement(new Attribute(attributeName, (FastVector) null));
-    }
+	private static List<String> readAllFileNames(String path) {
+		File folder = new File(path);
+		File[] files = folder.listFiles();
+		List<String> fileNames = new ArrayList<String>();
 
-    public void addStringAttribute(String attributeName, List<String> attributeValues){
-       FastVector attValues = new FastVector();
-       for(String value: attributeValues){
-           attValues.addElement(value);
-       }
-        atts.addElement(new Attribute(attributeName, attValues));
-    }
+		for (File file : files) {
+			if (file.isFile()) {
+				fileNames.add(file.getName());
+			}
+		}
+		return fileNames;
+	}
+
+	private static String getContentFromFile(String filename, boolean positive) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		List<String> lines = Files
+				.readAllLines(Paths.get(positive ? Constants.PATH_POSITIVE : Constants.PATH_NEGATIVE, filename));
+
+		for (String line : lines) {
+			sb.append(line);
+		}
+		return sb.toString();
+	}
 }

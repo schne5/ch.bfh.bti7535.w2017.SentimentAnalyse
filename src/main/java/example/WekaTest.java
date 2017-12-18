@@ -4,18 +4,31 @@ package example;
  * weka example -> https://www.programcreek.com/2013/01/a-simple-machine-learning-example-in-java/
  */
 
+
+/*
+ * write words in arff file instead of values?
+ * https://stackoverflow.com/questions/41877413/how-to-use-stringtowordvector-weka-in-java
+ * http://weka.sourceforge.net/doc.dev/weka/classifiers/Classifier.html
+ */
+
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
+import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.evaluation.NominalPrediction;
+import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.rules.DecisionTable;
 import weka.classifiers.rules.PART;
 import weka.classifiers.trees.DecisionStump;
 import weka.classifiers.trees.J48;
 import weka.core.FastVector;
 import weka.core.Instances;
+import weka.core.converters.ConverterUtils.DataSource;
+import weka.core.stemmers.LovinsStemmer;
+import weka.filters.unsupervised.attribute.StringToWordVector;
  
 public class WekaTest {
 	public static BufferedReader readDataFile(String filename) {
@@ -65,9 +78,10 @@ public class WekaTest {
 	}
  
 	public static void main(String[] args) throws Exception {
-		BufferedReader datafile = readDataFile("src/main/java/example/weather.txt");
+		DataSource source = new DataSource("training_test_files/WekaTest.arff");
+	    Instances data = source.getDataSet();
  
-		Instances data = new Instances(datafile);
+		
 		data.setClassIndex(data.numAttributes() - 1);
  
 		// Do 10-split cross validation
@@ -79,16 +93,36 @@ public class WekaTest {
  
 		// Use a set of classifiers
 		Classifier[] models = { 
-				new J48(), // a decision tree
-				new PART(), 
-				new DecisionTable(),//decision table majority classifier
-				new DecisionStump() //one-level decision tree
+				new NaiveBayes(),
+//				new J48(), // a decision tree
+//				new PART(), 
+//				new DecisionTable(),//decision table majority classifier
+//				new DecisionStump() //one-level decision tree
 		};
  
 		// Run for each model
 		for (int j = 0; j < models.length; j++) {
+			
+			StringToWordVector filter = new StringToWordVector();
+		    filter.setInputFormat(data);
+		    filter.setIDFTransform(true);
+//		    filter.setUseStoplist(true);
+		    LovinsStemmer stemmer = new LovinsStemmer();
+		    filter.setStemmer(stemmer);
+		    filter.setLowerCaseTokens(true);
+		    
+		    FilteredClassifier fc = new FilteredClassifier();
+		    //specify filter
+		    fc.setFilter(filter);
+		    //specify base classifier
+		    fc.setClassifier(models[j]);
+		    //Build the meta-classifier
+		    fc.buildClassifier(data);
+
+//		    System.out.println(models[j].graph());
+		    System.out.println(models[j]);
  
-			// Collect every group of predictions for current model in a FastVector
+//			// Collect every group of predictions for current model in a FastVector
 			FastVector predictions = new FastVector();
  
 			// For each training-testing split pair, train and test the classifier
@@ -100,15 +134,15 @@ public class WekaTest {
 				// Uncomment to see the summary for each training-testing pair.
 				//System.out.println(models[j].toString());
 			}
- 
-			// Calculate overall accuracy of current classifier on all splits
-			double accuracy = calculateAccuracy(predictions);
- 
-			// Print current classifier's name and accuracy in a complicated,
-			// but nice-looking way.
-			System.out.println("Accuracy of " + models[j].getClass().getSimpleName() + ": "
-					+ String.format("%.2f%%", accuracy)
-					+ "\n---------------------------------");
+// 
+//			// Calculate overall accuracy of current classifier on all splits
+//			double accuracy = calculateAccuracy(predictions);
+// 
+//			// Print current classifier's name and accuracy in a complicated,
+//			// but nice-looking way.
+//			System.out.println("Accuracy of " + models[j].getClass().getSimpleName() + ": "
+//					+ String.format("%.2f%%", accuracy)
+//					+ "\n---------------------------------");
 		}
  
 	}
