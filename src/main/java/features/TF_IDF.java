@@ -48,7 +48,7 @@ public class TF_IDF {
                 //List with frequency of each word
                 HashMap<String, Integer> wordStatistik = new HashMap<String, Integer>();
                 for (String word : words) {
-                    if (word.length() <= 2)
+                   if (word.length() <= 2)
                         continue;
                     //Insert in vocab if not exists or increment count
                     if (!wordStatistik.containsKey(word)) {
@@ -153,5 +153,14 @@ public class TF_IDF {
             }
         }
         return wordVector;
+    }
+
+    private int countTotalWords(HashMap<String, Integer> wordStatistik){
+        int count =0;
+        for(String key: wordStatistik.keySet()){
+            int value = wordStatistik.get(key);
+            count = count +value;
+        }
+        return count;
     }
 }

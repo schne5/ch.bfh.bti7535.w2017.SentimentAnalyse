@@ -61,7 +61,10 @@ public class Application {
 //	    
 //	    System.out.println("finished");
 		
-		ArffFileGenerator.generateFile();
+		//ArffFileGenerator.generateFile();
+		NaiveBayesClassifier classifier = new NaiveBayesClassifier();
+		classifier.setup();
+		classifier.crossValidate();
 		
 //		FeatureExtractor featureExtractor = new FeatureExtractor();
 //		featureExtractor.extractFeatures();

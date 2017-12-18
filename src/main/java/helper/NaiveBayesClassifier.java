@@ -1,71 +1,117 @@
 package helper;
 
+import weka.attributeSelection.AttributeSelection;
+import weka.attributeSelection.InfoGainAttributeEval;
+import weka.attributeSelection.Ranker;
 import weka.classifiers.Classifier;
 import weka.classifiers.bayes.NaiveBayes;
+import weka.classifiers.evaluation.Evaluation;
+import weka.classifiers.meta.FilteredClassifier;
 import weka.core.Instances;
+import weka.core.converters.ArffLoader;
+import weka.core.stemmers.LovinsStemmer;
+import weka.core.tokenizers.NGramTokenizer;
+import weka.filters.Filter;
+import weka.filters.MultiFilter;
+import weka.filters.unsupervised.attribute.StringToWordVector;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
 public class NaiveBayesClassifier {
-    Classifier naiveBayes = null;
-    Instances trainingData = null;
-    Instances testData = null;
+    private FilteredClassifier filteredBayes = new FilteredClassifier();
+    private Instances data = null;
 
-    public void train() {
-        try {
-            //Trainingsdaten laden
-            trainingData = getData(Constants.PATH_TRAINING_TEST_FILES + "/" + Constants.FILE_NAME_TRAINING);
-            //Class Attribut setzen (das letzte)
-            trainingData.setClassIndex(trainingData.numAttributes() - 1);
-            naiveBayes = new NaiveBayes();
-            naiveBayes.buildClassifier(trainingData);
-        } catch (Exception e) {
+    public void setup(){
+        readArffFile();
+        StringToWordVector vectorFilter = getSTWVFilter();
+        try
+        {
+            vectorFilter.setInputFormat(this.data);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        //Combine filters
+        MultiFilter multiFilter = new MultiFilter();
+        Filter[] filters = new Filter[1];
+        filters[0] = vectorFilter;
+        //filters[1] =getASFilter();
+        multiFilter.setFilters(filters);
+
+        this.filteredBayes.setClassifier(new weka.classifiers.bayes.NaiveBayes());
+        this.filteredBayes.setFilter(multiFilter);
+        try
+        {
+            multiFilter.setInputFormat(this.data);
+        } catch(Exception e)
+        {
             e.printStackTrace();
         }
     }
 
-    public void test() {
-        try {
-            int fehler =0;
-            testData = getData(Constants.PATH_TRAINING_TEST_FILES + "/" + Constants.FILE_NAME_TEST);
-            testData.setClassIndex(testData.numAttributes() - 1);
-            for (int i = 0; i < testData.numInstances(); i++) {
-                System.out.println(testData.instance(i));
-                double index = 0;
+    public void crossValidate() throws Exception {
+        Evaluation eval = new Evaluation(data);
+        for (int n = 0; n < 10; n++) {
+            Instances train = data.trainCV(10, n);
+            Instances test = data.testCV(10, n);
 
-                index = naiveBayes.classifyInstance(testData.instance(i));
-                String className = trainingData.classAttribute().value((int) index);
-                if(index > 0 && i >= testData.numInstances() /2 )
-                    fehler ++;
-                if(index == 0 && i < testData.numInstances() /2 )
-                    fehler ++;
-                System.out.println(className);
-            }
-            System.out.println("Anzahl Fehler: " + fehler);
-            System.out.println("Anzahl Total: " + testData.numInstances());
-            System.out.println("Richtig: " +((double)(((double)testData.numInstances()-(double)fehler)/(double)testData.numInstances()) * (double)100) + "%");
-        } catch(Exception e){
+                filteredBayes.buildClassifier(train);
+            eval.evaluateModel(filteredBayes, test);
+            double correctRate = eval.pctCorrect();
+            System.out.println(eval.pctCorrect());
+        }
+    }
+
+    private  void  readArffFile() {
+        try
+        {
+            //Read arff file
+            BufferedReader reader = new BufferedReader(new FileReader(Constants.PATH_RESSOURCES+"\\"+Constants.FILE_NAME_REVIEW));
+            ArffLoader.ArffReader arff = new ArffLoader.ArffReader(reader);
+            this.data = arff.getData();
+            this.data.setClassIndex(data.numAttributes() - 2);
+            reader.close();
+        } catch(FileNotFoundException e)
+        {
+            e.printStackTrace();
+        } catch(IOException e)
+        {
             e.printStackTrace();
         }
     }
 
-    private static Instances getData(String fileName) throws IOException {
-        BufferedReader reader = null;
-        Instances data = null;
-        try {
-            reader = new BufferedReader(
-                    new FileReader(fileName));
-            data = new Instances(reader);
+    private static NGramTokenizer getNgramTokenizer(int maxSize) {
+        NGramTokenizer ngram = new NGramTokenizer();
+        ngram.setNGramMinSize(1);
+        ngram.setNGramMaxSize(maxSize);
+        return ngram;
+    }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (reader != null) {
-                reader.close();
-            }
-        }
-        return data;
+    private static StringToWordVector getSTWVFilter() {
+        StringToWordVector filter = new StringToWordVector();
+
+        //filter options
+        filter.setWordsToKeep(50000);
+        filter.setLowerCaseTokens(true);
+        filter.setMinTermFreq(2);
+        LovinsStemmer stem = new LovinsStemmer();
+        filter.setStemmer(stem);
+        //filter.setStopwords(new File("resources/stopwords.txt"));
+        filter.setTokenizer(getNgramTokenizer(3));
+        return filter;
+    }
+    private static AttributeSelection getASFilter() {
+        AttributeSelection filter = new AttributeSelection();
+
+        InfoGainAttributeEval ev = new InfoGainAttributeEval();
+        Ranker ranker = new Ranker();
+        ranker.setNumToSelect(1000);
+
+        filter.setEvaluator(ev);
+        filter.setSearch(ranker);
+
+        return filter;
     }
 }

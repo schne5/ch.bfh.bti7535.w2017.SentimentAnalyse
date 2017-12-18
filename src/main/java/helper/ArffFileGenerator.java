@@ -15,7 +15,7 @@ public class ArffFileGenerator {
 
 	public static void writeFile(String filename, Instances instances) {
 		try {
-			Files.write(Paths.get(Constants.PATH_TRAINING_TEST_FILES, filename), instances.toString().getBytes());
+			Files.write(Paths.get(Constants.PATH_RESSOURCES, filename), instances.toString().getBytes());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -27,10 +27,10 @@ public class ArffFileGenerator {
         classValues.add("pos"); 
         classValues.add("neg"); 
         
-        Attribute sentiment = new Attribute("sentiment", classValues); 
+        Attribute sentiment = new Attribute("sentiment", classValues);
         Attribute text = new Attribute("text", (ArrayList<String>) null); 
  
-        attributes.add(sentiment); 
+        attributes.add(sentiment);
         attributes.add(text); 
  
         //build training data 
@@ -44,20 +44,19 @@ public class ArffFileGenerator {
 			String content = getContentFromFile(file, true);
 			instance = new DenseInstance(2); 
 			instance.setValue(attributes.get(0), classValues.get(0));
-			instance.setValue((Attribute) attributes.get(1), content); 
+			instance.setValue(attributes.get(1), content);
 			instances.add(instance); 
 		}
 		
 		for (String file : filesNegative) {
 			String content = getContentFromFile(file, false);
-			content += ", neg";
-			instance = new DenseInstance(2); 
+			instance = new DenseInstance(2);
 			instance.setValue(attributes.get(0), classValues.get(1));
-            instance.setValue((Attribute) attributes.get(1), content); 
+            instance.setValue(attributes.get(1), content);
             instances.add(instance); 
 		}
 		
-		writeFile("trainingData.arff", instances);
+		writeFile(Constants.FILE_NAME_REVIEW, instances);
 	}
 
 	private static List<String> readAllFileNames(String path) {
