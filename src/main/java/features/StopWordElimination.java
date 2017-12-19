@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import helper.Constants;
 import helper.FileToList;
 
 /**
@@ -18,7 +19,7 @@ import helper.FileToList;
 public class StopWordElimination {
 
 	public static List<String> removeStopWords(List<String> list) {
-		Path pathStopWords = Paths.get("stopWords", "stopWords.txt");
+		Path pathStopWords = Paths.get(Constants.PATH_RESSOURCES, Constants.FILE_NAME_STOPWORDS);
 		List<String> stopwords = FileToList.fileToList(pathStopWords);
 
 		List<String> cleandList = removeWords(stopwords, list);

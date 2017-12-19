@@ -19,8 +19,14 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.logging.*;
+
+import features.Negator;
 
 public class NaiveBayesClassifier {
+	private static final Logger LOGGER = Logger.getLogger( NaiveBayesClassifier.class.getName() );
+	
     private FilteredClassifier filteredBayes = new FilteredClassifier();
     private Instances data = null;
 
@@ -51,17 +57,26 @@ public class NaiveBayesClassifier {
         }
     }
 
-    public void crossValidate() throws Exception {
+    public void crossValidate(int numFolds) throws Exception {
+    	if (numFolds <= 1) {
+    		throw new Exception("Number of folds must be greater than 1");
+    	}
+    	
+    	Util.print("Started cross validation");
+    	
         Evaluation eval = new Evaluation(data);
-        for (int n = 0; n < 10; n++) {
-            Instances train = data.trainCV(10, n);
-            Instances test = data.testCV(10, n);
+        for (int n = 0; n < numFolds; n++) {
+            Instances train = data.trainCV(numFolds, n);
+            Instances test = data.testCV(numFolds, n);
 
-                filteredBayes.buildClassifier(train);
+            filteredBayes.buildClassifier(train);
             eval.evaluateModel(filteredBayes, test);
             double correctRate = eval.pctCorrect();
-            System.out.println(eval.pctCorrect());
+            
+            Util.print(String.format("Accuracy in round %d of %d: %f %%", n + 1, numFolds, correctRate));
         }
+        
+        Util.print("Finished cross validation");
     }
 
     private  void  readArffFile() {
@@ -71,7 +86,7 @@ public class NaiveBayesClassifier {
             BufferedReader reader = new BufferedReader(new FileReader(Constants.PATH_RESSOURCES+"\\"+Constants.FILE_NAME_REVIEW));
             ArffLoader.ArffReader arff = new ArffLoader.ArffReader(reader);
             this.data = arff.getData();
-            this.data.setClassIndex(data.numAttributes() - 2);
+            this.data.setClassIndex(0);
             reader.close();
         } catch(FileNotFoundException e)
         {
@@ -102,6 +117,7 @@ public class NaiveBayesClassifier {
         filter.setTokenizer(getNgramTokenizer(3));
         return filter;
     }
+    
     private static AttributeSelection getASFilter() {
         AttributeSelection filter = new AttributeSelection();
 

@@ -1,5 +1,6 @@
 package features;
 
+import helper.Constants;
 import helper.WordStatistik;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -45,7 +46,7 @@ public class SentimentWordCounter {
 
     public static HashMap<String, Integer> getSentimentList() {
         HashMap<String, Integer> sentimentList = new HashMap<String, Integer>();
-        File f = new File("lexicon\\inquirerbasic.xls");
+        File f = new File(Constants.PATH_RESSOURCES, Constants.FILE_NAME_SENTIMENTWORDS);
         FileInputStream ios = null;
 
         try {
