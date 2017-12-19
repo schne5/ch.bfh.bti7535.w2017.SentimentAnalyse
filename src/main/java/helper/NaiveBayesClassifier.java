@@ -37,7 +37,7 @@ public class NaiveBayesClassifier {
         {
             vectorFilter.setInputFormat(this.data);
         } catch(Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
         //Combine filters
         MultiFilter multiFilter = new MultiFilter();
@@ -53,13 +53,15 @@ public class NaiveBayesClassifier {
             multiFilter.setInputFormat(this.data);
         } catch(Exception e)
         {
-            e.printStackTrace();
+        	LOGGER.log(Level.SEVERE, e.getMessage());
         }
     }
 
     public void crossValidate(int numFolds) throws Exception {
     	if (numFolds <= 1) {
-    		throw new Exception("Number of folds must be greater than 1");
+    		String msg = "Number of folds must be greater than 1";
+    		LOGGER.log(Level.SEVERE, msg);
+    		throw new Exception(msg);
     	}
     	
     	Util.print("Started cross validation");
@@ -90,10 +92,10 @@ public class NaiveBayesClassifier {
             reader.close();
         } catch(FileNotFoundException e)
         {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage());
         } catch(IOException e)
         {
-            e.printStackTrace();
+        	LOGGER.log(Level.SEVERE, e.getMessage());
         }
     }
 
