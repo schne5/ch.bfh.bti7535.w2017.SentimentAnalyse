@@ -1,7 +1,5 @@
 package sentiment;
 
-import java.util.Calendar;
-
 import helper.ArffFileGenerator;
 import helper.NaiveBayesClassifier;
 
@@ -9,6 +7,7 @@ public class Application {
 	
 	public static void main(String[] args) throws Exception {
 		ArffFileGenerator generator = new ArffFileGenerator();
+		generator.setUseNegator(true);
 		generator.generateFile();
 		
 		NaiveBayesClassifier classifier = new NaiveBayesClassifier();

@@ -3,8 +3,6 @@ package helper;
 import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
-import weka.classifiers.Classifier;
-import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.evaluation.Evaluation;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.core.Instances;
@@ -19,10 +17,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.logging.*;
-
-import features.Negator;
 
 public class NaiveBayesClassifier {
 	private static final Logger LOGGER = Logger.getLogger( NaiveBayesClassifier.class.getName() );

@@ -13,11 +13,22 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import features.Negator;
+import features.NegatorResult;
+
 public class ArffFileGenerator {
 	
-	private boolean useNegator;
 	ArrayList<Attribute> attributes;
 	ArrayList<String> classValues;
+	
+	/**
+	 * true means feature 'negator' is enabled; false otherwise
+	 */
+	private boolean useNegator = false;
+	/**
+	 * represents the index of the negator attribute in the arff file
+	 */
+	private int negatorIndex = -1;
 	
 	public ArffFileGenerator() {
 		attributes = new ArrayList<Attribute>();
@@ -25,30 +36,16 @@ public class ArffFileGenerator {
         classValues.add("pos"); 
         classValues.add("neg"); 
         
-        // weka throws IllegalArgumentException (Attribute names are not unique!) if we use 'sentiment' instead of '@@class@@' 
-        Attribute sentiment = new Attribute("@@class@@", classValues); 
-        Attribute text = new Attribute("text", (ArrayList<String>) null); 
-        Attribute dummy = new Attribute("dummy"); //TODO: replace with real attribute
- 
+        // add "basic" attributes 
+        Attribute sentiment = new Attribute("@@class@@", classValues); // weka throws IllegalArgumentException (Attribute names are not unique!) if we write 'sentiment' instead of '@@class@@' 
+        Attribute text = new Attribute("text", (ArrayList<String>) null);  
         attributes.add(sentiment);
         attributes.add(text);
-        attributes.add(dummy);
-	}
-
-	public void writeFile(String filename, Instances instances) {
-		try {
-			Files.write(Paths.get(Constants.PATH_RESSOURCES, filename), instances.toString().getBytes());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public void generateFile() throws IOException {
 		Util.print("Started generating arff file");
-		
-
- 
-        //build training data 
+		 
         Instances instances = new Instances("Film Review", attributes, 1); 
         DenseInstance instance; 
 		
@@ -70,12 +67,35 @@ public class ArffFileGenerator {
 		Util.print("Finished generating arff file");
 	}
 	
+	public void writeFile(String filename, Instances instances) {
+		try {
+			Files.write(Paths.get(Constants.PATH_RESSOURCES, filename), instances.toString().getBytes());
+			Util.print(String.format("File %s written to the following location: %s", filename, Constants.PATH_RESSOURCES));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public boolean getUseNegator() {
 		return this.useNegator;
 	}
 	
 	public void setUseNegator(boolean value){
 		this.useNegator = value;
+		
+		if (value) {
+			Attribute attribute = new Attribute("negation"); 
+	        this.attributes.add(attribute);
+	        this.negatorIndex = this.attributes.size() - 1;
+		} else {
+			for (int i = 0; i < this.attributes.size(); i++) {
+				if (this.attributes.get(i).name() == "negation") {
+					this.attributes.remove(i);
+					this.negatorIndex = -1;
+					break;
+				}
+			}
+		}
 	}
 
 	private static List<String> readAllFileNames(String path) {
@@ -103,7 +123,17 @@ public class ArffFileGenerator {
 		 
 		instance.setValue(attributes.get(0), classValues.get(positive ? 0 : 1));
 		instance.setValue(attributes.get(1), content);
-		instance.setValue(attributes.get(2), 1);
+		
+		if (useNegator) {
+			NegatorResult result = null;
+			try {
+				result = Negator.executeNegation(content);
+			} catch (IOException e) {
+				Logger.log(Level.SEVERE, e.getMessage());
+			}
+			
+			instance.setValue(attributes.get(negatorIndex), result.getNegatedWordWeight());			
+		}
 		
 		return instance;
 	}
