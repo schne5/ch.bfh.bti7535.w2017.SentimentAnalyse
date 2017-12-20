@@ -123,6 +123,7 @@ public class ArffFileGenerator {
 			Logger.log(Level.SEVERE, e.getMessage());
 		}
 		content = TextPreProcessor.removeStopWords(content);
+		content = TextPreProcessor.increaseWordWeight(2,0.2,content);
 		 
 		instance.setValue(attributes.get(0), classValues.get(positive ? 0 : 1));
 		instance.setValue(attributes.get(1), content);
