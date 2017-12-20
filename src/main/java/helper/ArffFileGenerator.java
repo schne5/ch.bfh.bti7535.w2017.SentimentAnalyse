@@ -17,6 +17,7 @@ import java.util.List;
 
 import features.Negator;
 import features.NegatorResult;
+import features.Rating;
 
 public class ArffFileGenerator {
 	
@@ -31,6 +32,9 @@ public class ArffFileGenerator {
 	 * represents the index of the negator attribute in the arff file
 	 */
 	private int negatorIndex = -1;
+	
+	private boolean useRating = false;
+	private int ratingIndex = -1;
 	
 	public ArffFileGenerator() {
 		attributes = new ArrayList<Attribute>();
@@ -99,6 +103,28 @@ public class ArffFileGenerator {
 			}
 		}
 	}
+	
+	public boolean getUseRating() {
+		return this.useNegator;
+	}
+	
+	public void setUseRating(boolean value){
+		this.useRating = value;
+		
+		if (value) {
+			Attribute attribute = new Attribute("rating"); 
+	        this.attributes.add(attribute);
+	        this.ratingIndex = this.attributes.size() - 1;
+		} else {
+			for (int i = 0; i < this.attributes.size(); i++) {
+				if (this.attributes.get(i).name() == "rating") {
+					this.attributes.remove(i);
+					this.ratingIndex = -1;
+					break;
+				}
+			}
+		}
+	}
 
 	private static List<String> readAllFileNames(String path) {
 		File folder = new File(path);
@@ -114,7 +140,7 @@ public class ArffFileGenerator {
 	}
 	
 	private DenseInstance createInstance(String fileName, boolean positive) {
-		DenseInstance instance = new DenseInstance(3);
+		DenseInstance instance = new DenseInstance(attributes.size());
 		
 		String content = null;
 		try {
@@ -128,6 +154,7 @@ public class ArffFileGenerator {
 		instance.setValue(attributes.get(0), classValues.get(positive ? 0 : 1));
 		instance.setValue(attributes.get(1), content);
 		
+		// negator feature
 		if (useNegator) {
 			NegatorResult result = null;
 			try {
@@ -137,6 +164,12 @@ public class ArffFileGenerator {
 			}
 			
 			instance.setValue(attributes.get(negatorIndex), result.getNegatedWordWeight());			
+		}
+		
+		// rating feature
+		if (useRating) {
+			double result = Rating.getRating(content, 1);
+			instance.setValue(attributes.get(ratingIndex), result);			
 		}
 		
 		return instance;
