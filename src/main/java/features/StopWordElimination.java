@@ -13,7 +13,7 @@ import helper.FileToList;
  * 
  * @since 03.12.2017
  * 
- *        Entfernt Stopwörter aus übergebenen Text (Liste mit Strings)
+ *        Entfernt Stopwï¿½rter aus ï¿½bergebenen Text (Liste mit Strings)
  */
 
 public class StopWordElimination {
@@ -25,6 +25,15 @@ public class StopWordElimination {
 		List<String> cleandList = removeWords(stopwords, list);
 
 		return cleandList;
+	}
+	public static String removeStopWordsFromText(String text) {
+		Path pathStopWords = Paths.get(Constants.PATH_RESSOURCES, Constants.FILE_NAME_STOPWORDS);
+		List<String> stopwords = FileToList.fileToList(pathStopWords);
+		String cleanedText = "";
+		for(String word : stopwords){
+			cleanedText= text.replaceAll(word,"");
+		}
+		return cleanedText;
 	}
 
 	private static List<String> removeWords(List<String> toRemove, List<String> removeFrom) {

@@ -1,5 +1,7 @@
 package helper;
 
+import features.StopWordElimination;
+import features.TextPreProcessor;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
@@ -120,6 +122,7 @@ public class ArffFileGenerator {
 		} catch (IOException e) {
 			Logger.log(Level.SEVERE, e.getMessage());
 		}
+		content = TextPreProcessor.removeStopWords(content);
 		 
 		instance.setValue(attributes.get(0), classValues.get(positive ? 0 : 1));
 		instance.setValue(attributes.get(1), content);

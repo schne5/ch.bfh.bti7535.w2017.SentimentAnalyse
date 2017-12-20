@@ -60,7 +60,7 @@ public class NaiveBayesClassifier {
     	}
     	
     	Util.print("Started cross validation");
-    	
+    	double average =0;
         Evaluation eval = new Evaluation(data);
         for (int n = 0; n < numFolds; n++) {
             Instances train = data.trainCV(numFolds, n);
@@ -69,10 +69,10 @@ public class NaiveBayesClassifier {
             filteredBayes.buildClassifier(train);
             eval.evaluateModel(filteredBayes, test);
             double correctRate = eval.pctCorrect();
-            
+            average += correctRate;
             Util.print(String.format("Accuracy in round %d of %d: %f %%", n + 1, numFolds, correctRate));
         }
-        
+        Util.print(String.format("Average result %f %%",average / numFolds));
         Util.print("Finished cross validation");
     }
 

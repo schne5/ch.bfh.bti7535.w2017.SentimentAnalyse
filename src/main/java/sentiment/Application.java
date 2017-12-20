@@ -13,12 +13,6 @@ public class Application {
 		NaiveBayesClassifier classifier = new NaiveBayesClassifier();
 		classifier.setup();
 		classifier.crossValidate(10);
-		
-//		FeatureExtractor featureExtractor = new FeatureExtractor();
-//		featureExtractor.extractFeatures();
-//		
-//		NaiveBayesClassifier naiveBayesClassifier = new NaiveBayesClassifier();
-//		naiveBayesClassifier.train();
-//		naiveBayesClassifier.test();
+
     }
 }
