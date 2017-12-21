@@ -14,11 +14,11 @@ import java.util.List;
 
 public class SentimentWordCounter {
     HashMap<String, Integer> sentimentWords;
-    public SentimentWordCountResult countSentimentWords(List<String> input) {
+    public SentimentWordCountResult countSentimentWords(String text) {
         int posCount = 0;
         int negCount = 0;
-        	
-        HashMap<String, Integer> wordMap = splitText(input);
+
+        HashMap<String, Integer> wordMap = WordStatistik.countWords(text,true);
         if (sentimentWords == null) {
             sentimentWords = getSentimentList();
         }
@@ -33,7 +33,7 @@ public class SentimentWordCounter {
             }
         }
         
-        return new SentimentWordCountResult(posCount, negCount);
+        return new SentimentWordCountResult(posCount, negCount,posCount+negCount);
     }
 
     public static HashMap<String, Integer> splitText(List<String> lines) {

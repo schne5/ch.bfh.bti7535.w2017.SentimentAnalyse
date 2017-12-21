@@ -1,5 +1,7 @@
-package helper;
+package classifier;
 
+import helper.Constants;
+import helper.Util;
 import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
