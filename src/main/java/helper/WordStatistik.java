@@ -58,4 +58,14 @@ public class WordStatistik {
             text.append(line);
         return text.toString();
     }
+
+    public static List<String> getWords(String txt) {
+        List<String> words = new ArrayList<String>();
+        StringTokenizer tokenizer = new StringTokenizer(txt,"\n\"-+,&%$§.;:?!(){}[]1234567890*@ ");
+        while(tokenizer.hasMoreTokens()) {
+            String word = tokenizer.nextToken();
+            words.add(word);
+        }
+        return words;
+    }
 }

@@ -9,6 +9,7 @@ import weka.core.logging.Logger;
 import weka.core.logging.Logger.Level;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -113,7 +114,7 @@ public class ArffFileGenerator {
 		return fileNames;
 	}
 	
-	private DenseInstance createInstance(String fileName, boolean positive) {
+	private DenseInstance createInstance(String fileName, boolean positive) throws FileNotFoundException {
 		DenseInstance instance = new DenseInstance(3);
 		
 		String content = null;
@@ -122,9 +123,13 @@ public class ArffFileGenerator {
 		} catch (IOException e) {
 			Logger.log(Level.SEVERE, e.getMessage());
 		}
+		int n =content.length();
 		content = TextPreProcessor.removeStopWords(content);
+		int c =content.length();
 		content = TextPreProcessor.increaseWordWeight(2,0.2,content);
-		 
+		int d =content.length();
+		content = TextPreProcessor.increaseAdjAdvWordWeight(content);
+		int e =content.length();
 		instance.setValue(attributes.get(0), classValues.get(positive ? 0 : 1));
 		instance.setValue(attributes.get(1), content);
 		
@@ -132,8 +137,8 @@ public class ArffFileGenerator {
 			NegatorResult result = null;
 			try {
 				result = Negator.executeNegation(content);
-			} catch (IOException e) {
-				Logger.log(Level.SEVERE, e.getMessage());
+			} catch (IOException ex) {
+				Logger.log(Level.SEVERE, ex.getMessage());
 			}
 			
 			instance.setValue(attributes.get(negatorIndex), result.getNegatedWordWeight());			
