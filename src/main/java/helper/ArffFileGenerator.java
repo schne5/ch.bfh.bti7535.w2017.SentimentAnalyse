@@ -148,8 +148,13 @@ public class ArffFileGenerator {
 		} catch (IOException e) {
 			Logger.log(Level.SEVERE, e.getMessage());
 		}
+		int n = content.length();
 		content = TextPreProcessor.removeStopWords(content);
+        int a = content.length();
 		content = TextPreProcessor.increaseWordWeight(2,0.2,content);
+        int b = content.length();
+		content = TextPreProcessor.increaseAdjWordWeight(content);
+        int c = content.length();
 		 
 		instance.setValue(attributes.get(0), classValues.get(positive ? 0 : 1));
 		instance.setValue(attributes.get(1), content);
