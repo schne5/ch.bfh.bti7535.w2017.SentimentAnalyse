@@ -3,9 +3,9 @@ package features;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-import helper.Constants;
 import helper.FileToList;
 
 /**
@@ -13,27 +13,22 @@ import helper.FileToList;
  * 
  * @since 03.12.2017
  * 
- *        Entfernt Stopwï¿½rter aus ï¿½bergebenen Text (Liste mit Strings)
+ *        Entfernt Stopwörter aus übergebenen Text (Liste mit Strings)
  */
 
 public class StopWordElimination {
 
 	public static List<String> removeStopWords(List<String> list) {
-		Path pathStopWords = Paths.get(Constants.PATH_RESSOURCES, Constants.FILE_NAME_STOPWORDS);
-		List<String> stopwords = FileToList.fileToList(pathStopWords);
-
-		List<String> cleandList = removeWords(stopwords, list);
-
-		return cleandList;
+		return removeWords(readStopWords(), list);
 	}
-	public static String removeStopWordsFromText(String text) {
-		Path pathStopWords = Paths.get(Constants.PATH_RESSOURCES, Constants.FILE_NAME_STOPWORDS);
-		List<String> stopwords = FileToList.fileToList(pathStopWords);
-		String cleanedText = "";
-		for(String word : stopwords){
-			cleanedText= text.replaceAll(word,"");
-		}
-		return cleanedText;
+
+	public static String removeStopWords(String text) {
+		return removeWords(readStopWords(), text);
+	}
+
+	public static List<String> readStopWords() {
+		Path pathStopWords = Paths.get("stopWords", "stopWords.txt");
+		return FileToList.fileToList(pathStopWords);
 	}
 
 	private static List<String> removeWords(List<String> toRemove, List<String> removeFrom) {
@@ -42,4 +37,21 @@ public class StopWordElimination {
 		cleandList.removeAll(toRemove);
 		return cleandList;
 	}
+
+	private static String removeWords(List<String> toRemove, String removeFrom) {
+		String[] textArray = (removeFrom.split(" "));
+		HashMap<Integer, String> hm = new HashMap<Integer, String>();
+		for (String s : textArray) {
+			if (!toRemove.contains(s)) {
+				hm.put(hm.size() + 1, s);
+			}
+		}
+		String cleandString = "";
+		int j = hm.size();
+		for (int i = 1; i <= j; i++) {
+			cleandString += " " + hm.remove(i);
+		}
+		return cleandString.trim();
+	}
+
 }

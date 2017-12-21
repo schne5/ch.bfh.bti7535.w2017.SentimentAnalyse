@@ -9,7 +9,6 @@ import weka.core.logging.Logger;
 import weka.core.logging.Logger.Level;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -18,6 +17,7 @@ import java.util.List;
 
 import features.Negator;
 import features.NegatorResult;
+import features.Rating;
 
 public class ArffFileGenerator {
 	
@@ -32,6 +32,9 @@ public class ArffFileGenerator {
 	 * represents the index of the negator attribute in the arff file
 	 */
 	private int negatorIndex = -1;
+	
+	private boolean useRating = false;
+	private int ratingIndex = -1;
 	
 	public ArffFileGenerator() {
 		attributes = new ArrayList<Attribute>();
@@ -100,6 +103,28 @@ public class ArffFileGenerator {
 			}
 		}
 	}
+	
+	public boolean getUseRating() {
+		return this.useNegator;
+	}
+	
+	public void setUseRating(boolean value){
+		this.useRating = value;
+		
+		if (value) {
+			Attribute attribute = new Attribute("rating"); 
+	        this.attributes.add(attribute);
+	        this.ratingIndex = this.attributes.size() - 1;
+		} else {
+			for (int i = 0; i < this.attributes.size(); i++) {
+				if (this.attributes.get(i).name() == "rating") {
+					this.attributes.remove(i);
+					this.ratingIndex = -1;
+					break;
+				}
+			}
+		}
+	}
 
 	private static List<String> readAllFileNames(String path) {
 		File folder = new File(path);
@@ -114,8 +139,8 @@ public class ArffFileGenerator {
 		return fileNames;
 	}
 	
-	private DenseInstance createInstance(String fileName, boolean positive) throws FileNotFoundException {
-		DenseInstance instance = new DenseInstance(3);
+	private DenseInstance createInstance(String fileName, boolean positive) {
+		DenseInstance instance = new DenseInstance(attributes.size());
 		
 		String content = null;
 		try {
@@ -123,25 +148,28 @@ public class ArffFileGenerator {
 		} catch (IOException e) {
 			Logger.log(Level.SEVERE, e.getMessage());
 		}
-		int n =content.length();
 		content = TextPreProcessor.removeStopWords(content);
-		int c =content.length();
 		content = TextPreProcessor.increaseWordWeight(2,0.2,content);
-		int d =content.length();
-		content = TextPreProcessor.increaseAdjAdvWordWeight(content);
-		int e =content.length();
+		 
 		instance.setValue(attributes.get(0), classValues.get(positive ? 0 : 1));
 		instance.setValue(attributes.get(1), content);
 		
+		// negator feature
 		if (useNegator) {
 			NegatorResult result = null;
 			try {
 				result = Negator.executeNegation(content);
-			} catch (IOException ex) {
-				Logger.log(Level.SEVERE, ex.getMessage());
+			} catch (IOException e) {
+				Logger.log(Level.SEVERE, e.getMessage());
 			}
 			
 			instance.setValue(attributes.get(negatorIndex), result.getNegatedWordWeight());			
+		}
+		
+		// rating feature
+		if (useRating) {
+			double result = Rating.getRating(content, 1);
+			instance.setValue(attributes.get(ratingIndex), result);			
 		}
 		
 		return instance;
