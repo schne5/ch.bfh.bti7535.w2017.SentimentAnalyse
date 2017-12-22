@@ -50,25 +50,15 @@ public class ArffFileGenerator {
         attributes.add(text);
     }
 
-    public void generateFile() throws IOException {
+    public void generateFile(List<Document> documents) throws IOException {
         Util.print("Started generating arff file");
 
         Instances instances = new Instances("Film Review", attributes, 1);
         DenseInstance instance;
 
-        List<String> filesPositive = readAllFileNames(Constants.PATH_POSITIVE);
-        List<String> filesNegative = readAllFileNames(Constants.PATH_NEGATIVE);
-
-        for (String fileName : filesPositive) {
-            instance = createInstance(fileName, true);
-            instances.add(instance);
-        }
-
-        for (String fileName : filesNegative) {
-            instance = createInstance(fileName, false);
-            instances.add(instance);
-        }
-
+        documents.stream().forEach(d -> {
+            instances.add(createInstance(d));
+        });
         writeFile(Constants.FILE_NAME_REVIEW, instances);
 
         Util.print("Finished generating arff file");
@@ -131,28 +121,11 @@ public class ArffFileGenerator {
         this.useAdjectiveWordWeightIncreasing = useAdjectiveWordWeightIncreasing;
     }
 
-    private static List<String> readAllFileNames(String path) {
-        File folder = new File(path);
-        File[] files = folder.listFiles();
-        List<String> fileNames = new ArrayList<String>();
-
-        for (File file : files) {
-            if (file.isFile()) {
-                fileNames.add(file.getName());
-            }
-        }
-        return fileNames;
-    }
-
-    private DenseInstance createInstance(String fileName, boolean positive) {
+    private DenseInstance createInstance(Document d) {
         DenseInstance instance = new DenseInstance(attributes.size());
 
-        String content = null;
-        try {
-            content = getContentFromFile(fileName, positive);
-        } catch (IOException e) {
-            Logger.log(Level.SEVERE, e.getMessage());
-        }
+        String content = d.getContent();
+
         //Stopword removal
         if (removeStopWords)
             content = TextPreProcessor.removeStopWords(content);
@@ -163,7 +136,7 @@ public class ArffFileGenerator {
         if (useAdjectiveWordWeightIncreasing)
             content = TextPreProcessor.increaseAdjWordWeight(content);
 
-        instance.setValue(attributes.get(0), classValues.get(positive ? 0 : 1));
+        instance.setValue(attributes.get(0), classValues.get(d.getGold() == Classification.POSITIVE ? 1 : 0));
         instance.setValue(attributes.get(1), content);
 
         // negator feature
@@ -185,16 +158,5 @@ public class ArffFileGenerator {
         }
 
         return instance;
-    }
-
-    private String getContentFromFile(String filename, boolean positive) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        List<String> lines = Files
-                .readAllLines(Paths.get(positive ? Constants.PATH_POSITIVE : Constants.PATH_NEGATIVE, filename));
-
-        for (String line : lines) {
-            sb.append(line);
-        }
-        return sb.toString();
     }
 }

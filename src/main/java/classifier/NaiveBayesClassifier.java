@@ -1,6 +1,8 @@
 package classifier;
 
+import helper.ArffFileGenerator;
 import helper.Constants;
+import helper.Document;
 import helper.Util;
 import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.InfoGainAttributeEval;
@@ -19,9 +21,10 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.*;
 
-public class NaiveBayesClassifier {
+public class NaiveBayesClassifier implements Classifier {
 	private static final Logger LOGGER = Logger.getLogger( NaiveBayesClassifier.class.getName() );
 	
     private FilteredClassifier filteredBayes = new FilteredClassifier();
@@ -54,13 +57,20 @@ public class NaiveBayesClassifier {
         }
     }
 
-    public void crossValidate(int numFolds) throws Exception {
+    public void crossValidate(int numFolds,List<Document> documents) throws Exception {
     	if (numFolds <= 1) {
     		String msg = "Number of folds must be greater than 1";
     		LOGGER.log(Level.SEVERE, msg);
     		throw new Exception(msg);
     	}
-    	
+        ArffFileGenerator generator = new ArffFileGenerator();
+        generator.setRemoveStopWords(false);
+        generator.setUseNegator(true);
+        generator.setUseRating(false);
+        generator.setUseWordWeightIncreasing(true);
+        generator.setUseAdjectiveWordWeightIncreasing(true);
+    	generator.generateFile(documents);
+
     	Util.print("Started cross validation");
     	double average =0;
         Evaluation eval = new Evaluation(data);

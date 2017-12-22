@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class BaseLineClassifier extends AbstractClassifier {
+public class BaseLineClassifier implements Classifier {
 
     SentimentWordCounter wordCounter = new SentimentWordCounter();
 
@@ -63,7 +63,7 @@ public class BaseLineClassifier extends AbstractClassifier {
         System.out.println(String.format("Accuracy : %f %%",accuracy));
     }
 
-    public void crossValidate(List<Document> documents){
+    public void crossValidate(int numFolds,List<Document> documents){
         Collections.shuffle(documents);
         double denominator = 1 - 0.8;
         int offset = (int) Math.floor(((float) documents.size()) * denominator);
