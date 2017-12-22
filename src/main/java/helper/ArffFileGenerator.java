@@ -3,41 +3,30 @@ package helper;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
-import weka.core.logging.Logger;
-import weka.core.logging.Logger.Level;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
-import features.Negator;
-import features.NegatorResult;
-import features.Rating;
+import features.Feature;
 
 public class ArffFileGenerator {
-
+	
+	private static final Logger LOGGER = Logger.getLogger( ArffFileGenerator.class.getName() );
+	
+    ArrayList<Feature<?>> features;
     ArrayList<Attribute> attributes;
     ArrayList<String> classValues;
 
-    /**
-     * true means feature 'negator' is enabled; false otherwise
-     */
-    private boolean useNegator = false;
-    /**
-     * represents the index of the negator attribute in the arff file
-     */
-    private int negatorIndex = -1;
-
-    private boolean useRating = false;
-    private int ratingIndex = -1;
     private boolean useWordWeightIncreasing = false;
     private boolean useAdjectiveWordWeightIncreasing = false;
     private boolean removeStopWords = false;
 
     public ArffFileGenerator() {
+    	features = new ArrayList<>();
         attributes = new ArrayList<Attribute>();
         classValues = new ArrayList<String>();
         classValues.add("pos");
@@ -72,45 +61,20 @@ public class ArffFileGenerator {
             e.printStackTrace();
         }
     }
-
-    public void setUseNegator(boolean value) {
-        this.useNegator = value;
-
-        if (value) {
-            Attribute attribute = new Attribute("negation");
-            this.attributes.add(attribute);
-            this.negatorIndex = this.attributes.size() - 1;
-        } else {
-            for (int i = 0; i < this.attributes.size(); i++) {
-                if (this.attributes.get(i).name() == "negation") {
-                    this.attributes.remove(i);
-                    this.negatorIndex = -1;
-                    break;
-                }
-            }
-        }
+    
+    public void addFeature(Feature<?> feature) {
+        this.features.add(feature);
+        
+        Attribute attribute = new Attribute(feature.getName());
+        this.attributes.add(attribute);
+    }
+    
+    public List<Feature<?>> getFeatures() {
+        return this.features;
     }
 
     public void setUseWordWeightIncreasing(boolean value) {
         this.useWordWeightIncreasing = value;
-    }
-
-    public void setUseRating(boolean value) {
-        this.useRating = value;
-
-        if (value) {
-            Attribute attribute = new Attribute("rating");
-            this.attributes.add(attribute);
-            this.ratingIndex = this.attributes.size() - 1;
-        } else {
-            for (int i = 0; i < this.attributes.size(); i++) {
-                if (this.attributes.get(i).name() == "rating") {
-                    this.attributes.remove(i);
-                    this.ratingIndex = -1;
-                    break;
-                }
-            }
-        }
     }
 
     public void setRemoveStopWords(boolean removeStopWords) {
@@ -138,23 +102,14 @@ public class ArffFileGenerator {
 
         instance.setValue(attributes.get(0), classValues.get(d.getGold() == Classification.POSITIVE ? 1 : 0));
         instance.setValue(attributes.get(1), content);
-
-        // negator feature
-        if (useNegator) {
-            NegatorResult result = null;
-            try {
-                result = Negator.executeNegation(content);
-            } catch (IOException e) {
-                Logger.log(Level.SEVERE, e.getMessage());
-            }
-
-            instance.setValue(attributes.get(negatorIndex), result.getNegatedWordWeight());
-        }
-
-        // rating feature
-        if (useRating) {
-            double result = Rating.getRating(content, 1);
-            instance.setValue(attributes.get(ratingIndex), result);
+        
+        for (Feature<?> feature : this.features) {
+        	Object result = feature.get(content);
+        	if (result.getClass() == Double.class) {
+        		instance.setValue(this.attributes.get(this.features.indexOf(feature) + 2), (double)result);
+        	} else if (result.getClass() == String.class) {
+        		instance.setValue(this.attributes.get(this.features.indexOf(feature) + 2), (String)result);
+        	}
         }
 
         return instance;

@@ -1,6 +1,5 @@
 package features;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,21 +7,30 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 // TODO: include brackets as well
-public final class Negator {
+// TODO: can we still use the negated text, or do we use the count only?
+public final class Negator extends Feature<Double> {
 	private static final Logger LOGGER = Logger.getLogger( Negator.class.getName() );
 	
 	private static List<String> negations = new ArrayList<String>(Arrays.asList("n't", "not", "no", "never"));;
 	private static List<Character> punctuations = new ArrayList<Character>(Arrays.asList('.', '.', ',', '?', '!', ';'));
 	
-	private Negator() {}
+	public Negator(String name) {
+		super(name);
+	}
 	
-	public static NegatorResult executeNegation(String input) throws IOException {
-		NegatorResult result = new NegatorResult();
+	public Negator(String name, int weight) {
+		super(name, weight);
+	}
+	
+	public Double get(String input) {
 		StringBuilder sb = new StringBuilder();
 		
 		Boolean addNotPrefix = false;
 		Boolean isNegation = false;
 		Boolean isPunctuation = false;
+		
+		int totalWordsCount = 0;
+		int negatedWordsCount = 0;
 		
 		try {	    
 	        String[] words = input.split(" ");
@@ -39,14 +47,14 @@ public final class Negator {
 				else if (word.endsWith(negations.get(0)) || word.endsWith(negations.get(1))) {
 					isPunctuation = false;
 					isNegation = true;
-					result.incrementTotalWordCount();
+					totalWordsCount++;
 				} else {
-					result.incrementTotalWordCount();
+					totalWordsCount++;
 				}
 				
 				if (addNotPrefix) {
 					sb.append("NOT_");	
-					result.incrementNegatedWordCount();
+					negatedWordsCount++;
 				}
 				
 				sb.append(word + " ");
@@ -57,8 +65,6 @@ public final class Negator {
 			LOGGER.log(Level.SEVERE, e.toString());
 		}
 		
-		result.setOutput(sb.toString());
-		
-		return result;
+		return (double)negatedWordsCount / (totalWordsCount == 0 ? 1 : totalWordsCount);
 	}
 }

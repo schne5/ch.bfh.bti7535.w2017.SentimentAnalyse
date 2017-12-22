@@ -25,6 +25,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.*;
 
+import features.Negator;
+import features.Rating;
+
 public class NaiveBayesClassifier implements Classifier {
 	private static final Logger LOGGER = Logger.getLogger( NaiveBayesClassifier.class.getName() );
 	
@@ -66,9 +69,11 @@ public class NaiveBayesClassifier implements Classifier {
     	}
         Collections.shuffle(documents);
         ArffFileGenerator generator = new ArffFileGenerator();
+        
+        generator.addFeature(new Negator("negator"));
+        generator.addFeature(new Rating("rating"));
+        
         generator.setRemoveStopWords(false);
-        generator.setUseNegator(true);
-        generator.setUseRating(false);
         generator.setUseWordWeightIncreasing(true);
         generator.setUseAdjectiveWordWeightIncreasing(false);
     	generator.generateFile(documents);
