@@ -13,6 +13,7 @@ public class Application {
     public static void main(String[] args) throws Exception {
         List<Document> documents = Util.getAllDocuments();
         Classifier classifier = null;
+        args = new String[1];
         args[0]="NB";
         if (args.length > 0) {
             if (args[0] == "base") {
