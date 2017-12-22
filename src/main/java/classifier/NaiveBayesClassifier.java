@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.*;
 
@@ -63,13 +64,15 @@ public class NaiveBayesClassifier implements Classifier {
     		LOGGER.log(Level.SEVERE, msg);
     		throw new Exception(msg);
     	}
+        Collections.shuffle(documents);
         ArffFileGenerator generator = new ArffFileGenerator();
         generator.setRemoveStopWords(false);
         generator.setUseNegator(true);
         generator.setUseRating(false);
         generator.setUseWordWeightIncreasing(true);
-        generator.setUseAdjectiveWordWeightIncreasing(true);
+        generator.setUseAdjectiveWordWeightIncreasing(false);
     	generator.generateFile(documents);
+    	setup();
 
     	Util.print("Started cross validation");
     	double average =0;
@@ -122,6 +125,7 @@ public class NaiveBayesClassifier implements Classifier {
         filter.setMinTermFreq(2);
         LovinsStemmer stem = new LovinsStemmer();
         filter.setStemmer(stem);
+        filter.setIDFTransform(true);
         //filter.setStopwords(new File("resources/stopwords.txt"));
         filter.setTokenizer(getNgramTokenizer(3));
         return filter;
