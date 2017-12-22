@@ -1,5 +1,6 @@
-package features;
+package helper;
 
+import features.StopWordElimination;
 import helper.Constants;
 import helper.WordStatistik;
 import net.didion.jwnl.JWNL;

@@ -3,6 +3,7 @@ package helper;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -62,4 +63,21 @@ public final class Util {
 		}
 		return sb.toString();
 	}
-}
+		public static List<String> fileToList(Path file) {
+			List<String> list = new ArrayList<String>();
+			String[] lineArray;
+			try {
+				List<String> lines = Files.readAllLines(file);
+				for (String line : lines) {
+					lineArray = (line.split(" "));
+					for (String s : lineArray) {
+						list.add(s);
+					}
+				}
+			} catch (IOException e) {
+				System.out.println("File not readable");
+			}
+			return list;
+		}
+
+	}

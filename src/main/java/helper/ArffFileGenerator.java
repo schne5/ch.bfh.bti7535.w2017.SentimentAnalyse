@@ -1,7 +1,5 @@
 package helper;
 
-import features.StopWordElimination;
-import features.TextPreProcessor;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;

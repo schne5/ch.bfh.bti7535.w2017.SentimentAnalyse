@@ -1,19 +1,19 @@
 package features;
 
+import helper.Util;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import helper.FileToList;
-
 /**
  * @autor Anna
  * 
  * @since 03.12.2017
  * 
- *        Entfernt Stopwörter aus übergebenen Text (Liste mit Strings)
+ *        Entfernt Stopwï¿½rter aus ï¿½bergebenen Text (Liste mit Strings)
  */
 
 public class StopWordElimination {
@@ -28,7 +28,7 @@ public class StopWordElimination {
 
 	public static List<String> readStopWords() {
 		Path pathStopWords = Paths.get("stopWords", "stopWords.txt");
-		return FileToList.fileToList(pathStopWords);
+		return Util.fileToList(pathStopWords);
 	}
 
 	private static List<String> removeWords(List<String> toRemove, List<String> removeFrom) {
