@@ -14,6 +14,9 @@ import java.util.logging.Logger;
 
 import features.Feature;
 
+/**
+ * Generates the arff file used for naive bayes classification
+ */
 public class ArffFileGenerator {
 	
 	private static final Logger LOGGER = Logger.getLogger( ArffFileGenerator.class.getName() );
@@ -38,6 +41,11 @@ public class ArffFileGenerator {
         attributes.add(text);
     }
 
+    /**
+     * generates the Instances object
+     * @param documents
+     * @throws IOException
+     */
     public void generateFile(List<Document> documents) throws IOException {
         Util.print("Started generating arff file");
 
@@ -52,7 +60,12 @@ public class ArffFileGenerator {
         Util.print("Finished generating arff file");
     }
 
-    public void writeFile(String filename, Instances instances) {
+    /**
+     * Writes the file to filesystem
+     * @param filename
+     * @param instances
+     */
+    private void writeFile(String filename, Instances instances) {
         try {
             Files.write(Paths.get(Constants.PATH_RESSOURCES, filename), instances.toString().getBytes());
             Util.print(String.format("File %s written to the following location: %s", filename, Constants.PATH_RESSOURCES));
@@ -60,7 +73,11 @@ public class ArffFileGenerator {
             e.printStackTrace();
         }
     }
-    
+
+    /**
+     * adding a feature
+     * @param feature
+     */
     public void addFeature(Feature<?> feature) {
         this.features.add(feature);
         
@@ -68,19 +85,19 @@ public class ArffFileGenerator {
         this.attributes.add(attribute);
     }
 
+    /**
+     * adding a text- based feature
+     * @param feature
+     */
     public void addTextBasedFeature(TextFeature feature) {
         this.textBasedfeatures.add(feature);
     }
-    
-    public List<TextFeature> getTextBasedFeatures() {
-        return this.textBasedfeatures;
-    }
 
-    public List<Feature<?>> getFeatures() {
-        return this.features;
-    }
-
-
+    /**
+     * creates an entry for the arff file
+     * @param d
+     * @return
+     */
     private DenseInstance createInstance(Document d) {
         DenseInstance instance = new DenseInstance(attributes.size());
 
@@ -89,7 +106,7 @@ public class ArffFileGenerator {
             d.setContent(f.execute(d.getContent()));
         });
 
-        instance.setValue(attributes.get(0), classValues.get(d.getGold() == Classification.POSITIVE ? 1 : 0));
+        instance.setValue(attributes.get(0), classValues.get(d.getGold() == Classification.POSITIVE ? 0 : 1));
         instance.setValue(attributes.get(1), d.getContent());
 
         //Add features to arff file
@@ -104,5 +121,13 @@ public class ArffFileGenerator {
             }
         });
         return instance;
+    }
+
+    public List<TextFeature> getTextBasedFeatures() {
+        return this.textBasedfeatures;
+    }
+
+    public List<Feature<?>> getFeatures() {
+        return this.features;
     }
 }

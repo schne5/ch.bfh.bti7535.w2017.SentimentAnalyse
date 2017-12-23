@@ -1,5 +1,8 @@
 package helper;
 
+/**
+ * Class that contains all constants used in application
+ */
 public final class Constants {
 	public final static String PATH_GOLDSTANDARD = "goldstandard";
     public final static String PATH_POSITIVE = PATH_GOLDSTANDARD + "\\pos";

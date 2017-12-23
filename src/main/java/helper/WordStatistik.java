@@ -42,6 +42,12 @@ public class WordStatistik {
         }
         return wordMap;
     }
+
+    /**
+     * returns a list of words for a list of lines
+     * @param lines
+     * @return
+     */
     public static List<String> getWords(List<String> lines){
         List<String> words = new ArrayList<String>();
         StringTokenizer tokenizer = new StringTokenizer(splitText(lines),"\n\"-+,&%$§.;:?!(){}[]1234567890*@ ");
@@ -51,7 +57,11 @@ public class WordStatistik {
         }
         return words;
     }
-
+    /**
+     * returns a text with a list of lines as param
+     * @param lines
+     * @return
+     */
     public static String splitText(List<String> lines) {
         StringBuilder text = new StringBuilder();
         lines.stream().forEach(line -> {
@@ -60,6 +70,11 @@ public class WordStatistik {
         return text.toString();
     }
 
+    /**
+     * returns a list of words with text as param
+     * @param txt
+     * @return
+     */
     public static List<String> getWords(String txt) {
         List<String> words = new ArrayList<String>();
         StringTokenizer tokenizer = new StringTokenizer(txt,"\n\"-+,&%$§.;:?!(){}[]1234567890*@ ");

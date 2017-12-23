@@ -3,15 +3,15 @@ package features;
 import helper.Constants;
 import helper.Util;
 
+import java.io.FileReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
- *
- * 
  * Feature for removing stop words
  */
 
@@ -54,6 +54,13 @@ public class StopWordFeature extends TextFeature{
 
 	@Override
 	public String execute(String input) {
-		return removeWords(readStopWords(), input);
+		List<String> stopwords = readStopWords();
+
+		for(String str: stopwords){
+			input = input.replace(" " + str + " ", " ");
+			input = input.replace("." + str + " ", " ");
+			input = input.replace(" " + str + ".", ".");
+		}
+		return input;
 	}
 }

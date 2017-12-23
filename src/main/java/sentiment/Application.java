@@ -9,6 +9,9 @@ import helper.Util;
 
 import java.util.List;
 
+/**
+ * Class containing main method
+ */
 public class Application {
 
     public static void main(String[] args) throws Exception {
@@ -24,19 +27,5 @@ public class Application {
             }
             classifier.crossValidate(10, documents);
         }
-        /*ArffFileGenerator generator = new ArffFileGenerator();
-		generator.setRemoveStopWords(false);
-		generator.setUseNegator(true);
-		generator.setUseRating(false);
-		generator.setUseWordWeightIncreasing(true);
-		generator.setUseAdjectiveWordWeightIncreasing(true);
-		generator.generateFile();
-		
-		NaiveBayesClassifier classifier = new NaiveBayesClassifier();
-		classifier.setup();
-		classifier.crossValidate(10);*/
-
-      //  BaseLineClassifier baseLineClassifier = new BaseLineClassifier();
-       // baseLineClassifier.crossValidate(10,documents);
     }
 }

@@ -45,14 +45,6 @@ public class SentimentWordCounter {
         return new SentimentWordCountResult(posCount, negCount,posCount+negCount);
     }
 
-    public static HashMap<String, Integer> splitText(List<String> lines) {
-        StringBuilder text = new StringBuilder();
-        for (String line : lines)
-            text.append(line);
-
-        return WordStatistik.countWords(text.toString(), true);
-    }
-
     /**
      * Returns a hashmap with sentiment words
      * @return
@@ -81,7 +73,6 @@ public class SentimentWordCounter {
                 if (negCell != null && negCell.equals("Negativ"))
                     sentimentList.put(cell, 0);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }

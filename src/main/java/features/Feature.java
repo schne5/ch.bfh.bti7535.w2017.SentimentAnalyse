@@ -1,5 +1,9 @@
 package features;
 
+/**
+ * base class for all features
+ * @param <T>
+ */
 public abstract class Feature<T> {
 	private String name;
 	private int weight;

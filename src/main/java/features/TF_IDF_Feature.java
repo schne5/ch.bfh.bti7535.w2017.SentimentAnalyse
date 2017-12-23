@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Feature that weights the words with tf-idf
+ */
 public class TF_IDF_Feature {
     //Num of Documents
     private int numOfDocuments;
@@ -153,14 +156,5 @@ public class TF_IDF_Feature {
             }
         }
         return wordVector;
-    }
-
-    private int countTotalWords(HashMap<String, Integer> wordStatistik){
-        int count =0;
-        for(String key: wordStatistik.keySet()){
-            int value = wordStatistik.get(key);
-            count = count +value;
-        }
-        return count;
     }
 }

@@ -77,7 +77,7 @@ public class NaiveBayesClassifier implements Classifier {
     		LOGGER.log(Level.SEVERE, msg);
     		throw new Exception(msg);
     	}
-        Collections.shuffle(documents);
+        //Collections.shuffle(documents);
         ArffFileGenerator generator = new ArffFileGenerator();
 
         generator.addFeature(new NegatorFeature("negator"));
@@ -85,9 +85,10 @@ public class NaiveBayesClassifier implements Classifier {
         generator.addFeature(new ExclamationMarkFeature("exclamationMarks"));
         generator.addFeature(new IntenseWordFeature("intenseWords"));
 
+        //generator.addTextBasedFeature(new StopWordFeature("stopwords"));
         generator.addTextBasedFeature(new IncreaseWordWeightFeature("wordweight"));
        // generator.addTextBasedFeature(new IncreaseAdjectiveWeightFeature("adjective"));
-        generator.addTextBasedFeature(new StopWordFeature("stopwords"));
+
     	generator.generateFile(documents);
     	setup();
 
