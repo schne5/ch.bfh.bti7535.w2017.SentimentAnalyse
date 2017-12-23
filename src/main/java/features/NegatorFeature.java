@@ -15,7 +15,7 @@ public final class NegatorFeature extends Feature<Double> {
 	private static List<Character> punctuations = new ArrayList<Character>(Arrays.asList('.', '.', ',', '?', '!', ';'));
 	
 	public NegatorFeature(String name) {
-		super(name);
+		this(name, 1);
 	}
 	
 	public NegatorFeature(String name, int weight) {

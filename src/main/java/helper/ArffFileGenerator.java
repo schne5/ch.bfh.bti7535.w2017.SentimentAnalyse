@@ -97,6 +97,8 @@ public class ArffFileGenerator {
             Object result = f.get(d.getContent());
             if (result.getClass() == Double.class) {
                 instance.setValue(this.attributes.get(this.features.indexOf(f) + 2), (double)result);
+            } else if (result.getClass() == Double.class || result.getClass() == Integer.class) {
+                instance.setValue(this.attributes.get(this.features.indexOf(f) + 2), ((Integer)result).doubleValue());
             } else if (result.getClass() == String.class) {
                 instance.setValue(this.attributes.get(this.features.indexOf(f) + 2), (String)result);
             }

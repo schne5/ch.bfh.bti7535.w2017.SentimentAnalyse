@@ -82,6 +82,8 @@ public class NaiveBayesClassifier implements Classifier {
 
         generator.addFeature(new NegatorFeature("negator"));
         generator.addFeature(new RatingFeature("rating"));
+        generator.addFeature(new ExclamationMarkFeature("exclamationMarks"));
+        generator.addFeature(new IntenseWordFeature("intenseWords"));
 
         generator.addTextBasedFeature(new IncreaseWordWeightFeature("wordweight"));
        // generator.addTextBasedFeature(new IncreaseAdjectiveWeightFeature("adjective"));

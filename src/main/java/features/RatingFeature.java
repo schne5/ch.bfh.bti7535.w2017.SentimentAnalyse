@@ -13,7 +13,7 @@ public final class RatingFeature extends Feature<Double> {
 	private static final Logger LOGGER = Logger.getLogger( RatingFeature.class.getName() );
 	
 	public RatingFeature(String name) {
-		super(name);
+		this(name, 1);
 	}
 	
 	public RatingFeature(String name, int weight) {
