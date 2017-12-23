@@ -25,6 +25,7 @@ public class ArffFileGenerator {
 
     public ArffFileGenerator() {
     	features = new ArrayList<>();
+    	textBasedfeatures = new ArrayList<>();
         attributes = new ArrayList<Attribute>();
         classValues = new ArrayList<String>();
         classValues.add("pos");
@@ -41,11 +42,11 @@ public class ArffFileGenerator {
         Util.print("Started generating arff file");
 
         Instances instances = new Instances("Film Review", attributes, 1);
-        DenseInstance instance;
 
         documents.stream().forEach(d -> {
             instances.add(createInstance(d));
         });
+        Util.print("Finished setting Feature");
         writeFile(Constants.FILE_NAME_REVIEW, instances);
 
         Util.print("Finished generating arff file");

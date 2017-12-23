@@ -54,8 +54,9 @@ public class WordStatistik {
 
     public static String splitText(List<String> lines) {
         StringBuilder text = new StringBuilder();
-        for (String line : lines)
+        lines.stream().forEach(line -> {
             text.append(line);
+        });
         return text.toString();
     }
 

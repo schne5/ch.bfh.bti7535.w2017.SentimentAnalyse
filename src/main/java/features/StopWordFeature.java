@@ -1,5 +1,6 @@
 package features;
 
+import helper.Constants;
 import helper.Util;
 
 import java.nio.file.Path;
@@ -24,7 +25,7 @@ public class StopWordFeature extends TextFeature{
 		super(name);
 	}
 	public static List<String> readStopWords() {
-		Path pathStopWords = Paths.get("stopWords", "stopWords.txt");
+		Path pathStopWords = Paths.get(Constants.PATH_RESSOURCES +"\\stopWords.txt");
 		return Util.fileToList(pathStopWords);
 	}
 
