@@ -5,15 +5,18 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public final class Rating extends Feature<Double> {
+/**
+ * Feature for analyzing rating in text
+ */
+public final class RatingFeature extends Feature<Double> {
 	
-	private static final Logger LOGGER = Logger.getLogger( Rating.class.getName() );
+	private static final Logger LOGGER = Logger.getLogger( RatingFeature.class.getName() );
 	
-	public Rating(String name) {
+	public RatingFeature(String name) {
 		super(name);
 	}
 	
-	public Rating(String name, int weight) {
+	public RatingFeature(String name, int weight) {
 		super(name, weight);
 	}
 	
@@ -46,7 +49,6 @@ public final class Rating extends Feature<Double> {
 			for (int r : ratings) {
 				percent += r;
 			}
-			
 			percent = percent / (ratings.size() * 10);
 			
 			if (percent < 0.35) { // 0-35% => negative rating
@@ -59,7 +61,6 @@ public final class Rating extends Feature<Double> {
 		} catch(Exception e) {
 			LOGGER.log(Level.SEVERE, e.toString());
 		}
-		
 		return rating;
 	}
 }

@@ -8,4 +8,6 @@ public final class Constants {
     public final static String FILE_NAME_REVIEW= "filmReviewData.arff";
     public final static String FILE_NAME_STOPWORDS = "StopWords.txt";
     public final static String FILE_NAME_SENTIMENTWORDS = "inquirerbasic.xls";
+    public final static String NAIVE_BAYES = "NB";
+    public final static String BASELINE = "Baseline";
 }

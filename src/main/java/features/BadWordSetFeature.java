@@ -1,33 +1,33 @@
 package features;
-
-import helper.Document;
 import helper.WordStatistik;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class BadWordSetFeature {
+public class BadWordSetFeature extends Feature<Double>{
     private List<String> wordList;
 
-    public List<String> getWordList() {
-        if (wordList == null) {
-            wordList = Arrays.asList("bad", "boring", "worst", "stupid", "waste",
-                    "lame", "mess", "redundant","confusing","confused","tired");
-        }
-        return wordList;
+    public BadWordSetFeature(String name) {
+        super(name);
     }
 
-    public double applyFeature(Document d){
-        String content = d.getContent();
+    @Override
+    public Double get(String input) {
+        String content = input;
         int[] count = new int[1];
         HashMap<String,Integer> words =WordStatistik.countWords(content,false);
         getWordList().stream().forEach(w -> {
             if(words.containsKey(w))
                 count[0]++;
         });
-        return count[0];
+        return new Double(count[0]);
+    }
 
-
+    private List<String> getWordList() {
+        if (wordList == null) {
+            wordList = Arrays.asList("bad", "boring", "worst", "stupid", "waste",
+                    "lame", "mess", "redundant","confusing","confused","tired");
+        }
+        return wordList;
     }
 }

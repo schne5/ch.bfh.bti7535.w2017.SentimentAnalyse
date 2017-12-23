@@ -12,8 +12,17 @@ import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Class for counting positive and negative words
+ */
 public class SentimentWordCounter {
     HashMap<String, Integer> sentimentWords;
+
+    /**
+     * counts positive and negative words
+     * @param text
+     * @return
+     */
     public SentimentWordCountResult countSentimentWords(String text) {
         int posCount = 0;
         int negCount = 0;
@@ -44,6 +53,10 @@ public class SentimentWordCounter {
         return WordStatistik.countWords(text.toString(), true);
     }
 
+    /**
+     * Returns a hashmap with sentiment words
+     * @return
+     */
     public static HashMap<String, Integer> getSentimentList() {
         HashMap<String, Integer> sentimentList = new HashMap<String, Integer>();
         File f = new File(Constants.PATH_RESSOURCES, Constants.FILE_NAME_SENTIMENTWORDS);

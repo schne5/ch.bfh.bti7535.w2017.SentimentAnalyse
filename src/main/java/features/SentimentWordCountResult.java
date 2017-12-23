@@ -1,5 +1,8 @@
 package features;
 
+/**
+ * Result class with count of negative and positive words
+ */
 public class SentimentWordCountResult {
     private int positiveWordCount;
     private int negativeWordCount;

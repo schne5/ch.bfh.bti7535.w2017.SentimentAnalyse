@@ -4,27 +4,39 @@ import features.SentimentWordCountResult;
 import features.SentimentWordCounter;
 import helper.Classification;
 import helper.Document;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Baseline Algorithm: counts positive and negative words
+ */
 public class BaseLineClassifier implements Classifier {
 
     SentimentWordCounter wordCounter = new SentimentWordCounter();
 
-    public List<Document> execute(List<Document> trainingSet, List<Document> testSet){
-        List<Document> result = new ArrayList<Document>();
+    public List<Document> execute(List<Document> trainingSet, List<Document> testSet) {
+        List<Document> result = new ArrayList<>();
         trainingSet.addAll(testSet);
-        for (Document doc :trainingSet ){
-            result.add(processDocument(doc));
-        }
+        trainingSet.stream().forEach(d -> {
+                    result.add(processDocument(d));
+                }
+        );
         return result;
     }
-    private Document processDocument(Document document){
+
+    /**
+     * Sets the classification based on calculated result
+     *
+     * @param document
+     * @return
+     */
+    private Document processDocument(Document document) {
 
         SentimentWordCountResult result = wordCounter.countSentimentWords(document.getContent());
         if (result.getTotal() > 0) {
-            Classification c = ((double)result.getPositiveWordCount() / (double)result.getTotal() > 0.5) ? Classification.POSITIVE : Classification.NEGATIVE;
+            Classification c = ((double) result.getPositiveWordCount() / (double) result.getTotal() > 0.5) ? Classification.POSITIVE : Classification.NEGATIVE;
             document.setTest(c);
         } else {
             document.setTest(Classification.NOT_SPECIFIED);
@@ -32,7 +44,12 @@ public class BaseLineClassifier implements Classifier {
         return document;
     }
 
-    public void classify(List<Document> documents){
+    /**
+     * Calculates the accuracy of the result
+     *
+     * @param documents
+     */
+    public void classify(List<Document> documents) {
         double truePos = 0;
         double trueNeg = 0;
         double falsePos = 0;
@@ -42,7 +59,7 @@ public class BaseLineClassifier implements Classifier {
             Classification gold = doc.getGold();
             Classification tested = doc.getTest();
 
-            // Ignores SENTIMENT_NOT_CLASSIFIED
+            // Ignores NOT_SPECIFIED
             if (gold == tested) {
                 //true
                 if (gold == Classification.POSITIVE)
@@ -59,11 +76,17 @@ public class BaseLineClassifier implements Classifier {
         }
         double denominator = truePos + trueNeg + falseNeg + falsePos;
         double nominator = trueNeg + truePos;
-        double accuracy = (nominator / denominator) *100;
-        System.out.println(String.format("Accuracy : %f %%",accuracy));
+        double accuracy = (nominator / denominator) * 100;
+        System.out.println(String.format("Accuracy : %f %%", accuracy));
     }
 
-    public void crossValidate(int numFolds,List<Document> documents){
+    /**
+     * Executes the Baseline Algorithm with cross validation
+     *
+     * @param numFolds
+     * @param documents
+     */
+    public void crossValidate(int numFolds, List<Document> documents) {
         Collections.shuffle(documents);
         double denominator = 1 - 0.8;
         int offset = (int) Math.floor(((float) documents.size()) * denominator);

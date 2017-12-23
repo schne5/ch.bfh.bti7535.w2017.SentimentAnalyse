@@ -1,5 +1,6 @@
 package classifier;
 
+import features.*;
 import helper.ArffFileGenerator;
 import helper.Constants;
 import helper.Document;
@@ -25,15 +26,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.*;
 
-import features.Negator;
-import features.Rating;
-
+/**
+ * Naive Bayes Classification Algorithm
+ */
 public class NaiveBayesClassifier implements Classifier {
 	private static final Logger LOGGER = Logger.getLogger( NaiveBayesClassifier.class.getName() );
-	
+
     private FilteredClassifier filteredBayes = new FilteredClassifier();
     private Instances data = null;
 
+    /**
+     * Read Arff File with containing data and apply filters
+     */
     public void setup(){
         readArffFile();
         StringToWordVector vectorFilter = getSTWVFilter();
@@ -61,6 +65,12 @@ public class NaiveBayesClassifier implements Classifier {
         }
     }
 
+    /**
+     * Executes Naive Bayes Algorithm with cross validation
+     * @param numFolds
+     * @param documents
+     * @throws Exception
+     */
     public void crossValidate(int numFolds,List<Document> documents) throws Exception {
     	if (numFolds <= 1) {
     		String msg = "Number of folds must be greater than 1";
@@ -69,13 +79,13 @@ public class NaiveBayesClassifier implements Classifier {
     	}
         Collections.shuffle(documents);
         ArffFileGenerator generator = new ArffFileGenerator();
-        
-        generator.addFeature(new Negator("negator"));
-        generator.addFeature(new Rating("rating"));
-        
-        generator.setRemoveStopWords(false);
-        generator.setUseWordWeightIncreasing(true);
-        generator.setUseAdjectiveWordWeightIncreasing(false);
+
+        generator.addFeature(new NegatorFeature("negator"));
+        generator.addFeature(new RatingFeature("rating"));
+
+        generator.addTextBasedFeature(new IncreaseWordWeightFeature("wordweight"));
+        generator.addTextBasedFeature(new IncreaseAdjectiveWeightFeature("adjective"));
+        generator.addTextBasedFeature(new StopWordFeature("stopwords"));
     	generator.generateFile(documents);
     	setup();
 
@@ -96,6 +106,9 @@ public class NaiveBayesClassifier implements Classifier {
         Util.print("Finished cross validation");
     }
 
+    /**
+     * Method for reading arff file
+     */
     private  void  readArffFile() {
         try
         {
@@ -114,6 +127,11 @@ public class NaiveBayesClassifier implements Classifier {
         }
     }
 
+    /**
+     * Returns Ngram tokenzizer
+     * @param maxSize
+     * @return
+     */
     private static NGramTokenizer getNgramTokenizer(int maxSize) {
         NGramTokenizer ngram = new NGramTokenizer();
         ngram.setNGramMinSize(1);
@@ -121,6 +139,10 @@ public class NaiveBayesClassifier implements Classifier {
         return ngram;
     }
 
+    /**
+     * Setup String to word Filter
+     * @return
+     */
     private static StringToWordVector getSTWVFilter() {
         StringToWordVector filter = new StringToWordVector();
 
@@ -131,11 +153,14 @@ public class NaiveBayesClassifier implements Classifier {
         LovinsStemmer stem = new LovinsStemmer();
         filter.setStemmer(stem);
         filter.setIDFTransform(true);
-        //filter.setStopwords(new File("resources/stopwords.txt"));
         filter.setTokenizer(getNgramTokenizer(3));
         return filter;
     }
-    
+
+    /**
+     * Setup AS-filter
+     * @return
+     */
     private static AttributeSelection getASFilter() {
         AttributeSelection filter = new AttributeSelection();
 

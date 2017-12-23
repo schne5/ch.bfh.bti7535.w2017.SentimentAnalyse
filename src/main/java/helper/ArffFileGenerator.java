@@ -1,5 +1,6 @@
 package helper;
 
+import features.TextFeature;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
@@ -18,12 +19,9 @@ public class ArffFileGenerator {
 	private static final Logger LOGGER = Logger.getLogger( ArffFileGenerator.class.getName() );
 	
     ArrayList<Feature<?>> features;
+    ArrayList<TextFeature> textBasedfeatures;
     ArrayList<Attribute> attributes;
     ArrayList<String> classValues;
-
-    private boolean useWordWeightIncreasing = false;
-    private boolean useAdjectiveWordWeightIncreasing = false;
-    private boolean removeStopWords = false;
 
     public ArffFileGenerator() {
     	features = new ArrayList<>();
@@ -68,50 +66,40 @@ public class ArffFileGenerator {
         Attribute attribute = new Attribute(feature.getName());
         this.attributes.add(attribute);
     }
+
+    public void addTextBasedFeature(TextFeature feature) {
+        this.textBasedfeatures.add(feature);
+    }
     
+    public List<TextFeature> getTextBasedFeatures() {
+        return this.textBasedfeatures;
+    }
+
     public List<Feature<?>> getFeatures() {
         return this.features;
     }
 
-    public void setUseWordWeightIncreasing(boolean value) {
-        this.useWordWeightIncreasing = value;
-    }
-
-    public void setRemoveStopWords(boolean removeStopWords) {
-        this.removeStopWords = removeStopWords;
-    }
-
-    public void setUseAdjectiveWordWeightIncreasing(boolean useAdjectiveWordWeightIncreasing) {
-        this.useAdjectiveWordWeightIncreasing = useAdjectiveWordWeightIncreasing;
-    }
 
     private DenseInstance createInstance(Document d) {
         DenseInstance instance = new DenseInstance(attributes.size());
 
-        String content = d.getContent();
-
-        //Stopword removal
-        if (removeStopWords)
-            content = TextPreProcessor.removeStopWords(content);
-        //Increase textregion
-        if (useWordWeightIncreasing)
-            content = TextPreProcessor.increaseWordWeight(2, 0.2, content);
-        //Increase adjective weights
-        if (useAdjectiveWordWeightIncreasing)
-            content = TextPreProcessor.increaseAdjWordWeight(content);
+        //Apply text- based features on text
+        textBasedfeatures.stream().forEach(f ->{
+            d.setContent(f.execute(d.getContent()));
+        });
 
         instance.setValue(attributes.get(0), classValues.get(d.getGold() == Classification.POSITIVE ? 1 : 0));
-        instance.setValue(attributes.get(1), content);
-        
-        for (Feature<?> feature : this.features) {
-        	Object result = feature.get(content);
-        	if (result.getClass() == Double.class) {
-        		instance.setValue(this.attributes.get(this.features.indexOf(feature) + 2), (double)result);
-        	} else if (result.getClass() == String.class) {
-        		instance.setValue(this.attributes.get(this.features.indexOf(feature) + 2), (String)result);
-        	}
-        }
+        instance.setValue(attributes.get(1), d.getContent());
 
+        //Add features to arff file
+        features.stream().forEach(f ->{
+            Object result = f.get(d.getContent());
+            if (result.getClass() == Double.class) {
+                instance.setValue(this.attributes.get(this.features.indexOf(f) + 2), (double)result);
+            } else if (result.getClass() == String.class) {
+                instance.setValue(this.attributes.get(this.features.indexOf(f) + 2), (String)result);
+            }
+        });
         return instance;
     }
 }

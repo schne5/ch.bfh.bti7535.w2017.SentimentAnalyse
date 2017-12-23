@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-public class TF_IDF {
+public class TF_IDF_Feature {
     //Num of Documents
     private int numOfDocuments;
 
@@ -25,7 +25,7 @@ public class TF_IDF {
     //Min occurrence of words
     private int min_df;
 
-    public TF_IDF(HashMap<String,Boolean> files, double max_df,int min_df){
+    public TF_IDF_Feature(HashMap<String,Boolean> files, double max_df, int min_df){
         this.files = files;
         this.numOfDocuments = files.size();
         this.vocabularyList = new HashMap<String,Integer>();
@@ -104,7 +104,7 @@ public class TF_IDF {
             List<String> lines = Files.readAllLines(Paths.get(positive ?Constants.PATH_POSITIVE : Constants.PATH_NEGATIVE, filename));
             List<String> words = WordStatistik.getWords(lines);
             //Remove stop words
-            words = StopWordElimination.removeStopWords(words);
+            words = StopWordFeature.removeStopWords(words);
             //Generate word frequency List
             for (String word : words) {
                 if (wordStatistik.containsKey(word)) {

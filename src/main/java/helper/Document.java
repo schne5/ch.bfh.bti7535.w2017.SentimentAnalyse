@@ -1,7 +1,8 @@
 package helper;
 
-import java.util.List;
-
+/**
+ * Object to store all Information of a textfile
+ */
 public class Document {
     private String fileName;
     private Classification gold;
