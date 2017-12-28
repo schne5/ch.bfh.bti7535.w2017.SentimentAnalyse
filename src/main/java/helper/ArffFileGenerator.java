@@ -51,9 +51,11 @@ public class ArffFileGenerator {
     /**
      * generates the Instances object
      * @param documents
+     * @param path path to the location where the .arff file will be saved
+     * @param filename name of the .arff file that will contain the header and data information
      * @throws IOException
      */
-    public void generateFile(List<Document> documents) throws IOException {
+    public void generateFile(List<Document> documents, String path, String filename) throws IOException {
         Util.print("Started generating arff file");
 
         Instances instances = new Instances("Film Review", attributes, 1);
@@ -62,7 +64,7 @@ public class ArffFileGenerator {
             instances.add(createInstance(d));
         });
         Util.print("Finished setting Feature");
-        writeFile(Constants.FILE_NAME_REVIEW, instances);
+        writeFile(path, filename, instances);
 
         Util.print("Finished generating arff file");
     }
@@ -120,10 +122,10 @@ public class ArffFileGenerator {
      * @param filename
      * @param instances
      */
-    private void writeFile(String filename, Instances instances) {
+    private void writeFile(String path, String filename, Instances instances) {
         try {
-            Files.write(Paths.get(Constants.PATH_RESSOURCES, filename), instances.toString().getBytes());
-            Util.print(String.format("File %s written to the following location: %s", filename, Constants.PATH_RESSOURCES));
+            Files.write(Paths.get(path, filename), instances.toString().getBytes());
+            Util.print(String.format("File %s written to the following location: %s", filename, path));
         } catch (IOException e) {
             e.printStackTrace();
         }

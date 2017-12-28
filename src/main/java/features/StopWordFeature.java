@@ -37,7 +37,7 @@ public class StopWordFeature extends Feature<String> {
 		return input;
 	}
 	
-	public static List<String> readStopWords() {
+	private static List<String> readStopWords() {
 		Path pathStopWords = Paths.get(Constants.PATH_RESSOURCES +"\\stopWords.txt");
 		return Util.fileToList(pathStopWords);
 	}

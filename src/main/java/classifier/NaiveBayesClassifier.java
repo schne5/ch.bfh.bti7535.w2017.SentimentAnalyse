@@ -1,8 +1,5 @@
 package classifier;
 
-import features.*;
-import helper.ArffFileGenerator;
-import helper.Constants;
 import helper.Document;
 import helper.Util;
 import weka.attributeSelection.AttributeSelection;
@@ -33,7 +30,20 @@ public class NaiveBayesClassifier implements Classifier {
 
     private FilteredClassifier filteredBayes = new FilteredClassifier();
     private Instances data = null;
+    
+    private String path;
+    private String filename;
 
+    /**
+     * Naive Bayes classification algorithm
+     * @param arffFilePath path to the .arff file
+     * @param arffFileName name of the .arff file that contains the required header and data information
+     */
+    public NaiveBayesClassifier(String arffFilePath, String arffFileName) {
+    	this.path = arffFilePath;
+    	this.filename = arffFileName;
+    }
+    
     /**
      * Read Arff File with containing data and apply filters
      */
@@ -77,18 +87,7 @@ public class NaiveBayesClassifier implements Classifier {
     		throw new Exception(msg);
     	}
         //Collections.shuffle(documents);
-        ArffFileGenerator generator = new ArffFileGenerator();
-
-        generator.addFeature(new NegatorFeature("negator"));
-        generator.addFeature(new RatingFeature("rating"));
-        generator.addFeature(new ExclamationMarkFeature("exclamationMarks"));
-        generator.addFeature(new IntenseWordFeature("intenseWords"));
-
-        //generator.addFeature(new StopWordFeature("stopwords"));
-        generator.addFeature(new IncreaseWordWeightFeature("wordweight"));
-       // generator.addFeature(new IncreaseAdjectiveWeightFeature("adjective"));
-
-    	generator.generateFile(documents);
+    	
     	setup();
 
     	Util.print("Started cross validation");
@@ -115,7 +114,7 @@ public class NaiveBayesClassifier implements Classifier {
         try
         {
             //Read arff file
-            BufferedReader reader = new BufferedReader(new FileReader(Constants.PATH_RESSOURCES+"\\"+Constants.FILE_NAME_REVIEW));
+            BufferedReader reader = new BufferedReader(new FileReader(this.path + "\\" + this.filename));
             ArffLoader.ArffReader arff = new ArffLoader.ArffReader(reader);
             this.data = arff.getData();
             this.data.setClassIndex(0);
