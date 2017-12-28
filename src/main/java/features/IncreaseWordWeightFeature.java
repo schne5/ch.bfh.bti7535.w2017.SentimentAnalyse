@@ -3,12 +3,12 @@ package features;
 /**
  * Feature for increasing the weight of a text section
  */
-public class IncreaseWordWeightFeature extends TextFeature {
+public class IncreaseWordWeightFeature extends Feature<String> {
     int factor;
     double textSection;
 
     public IncreaseWordWeightFeature(String name){
-        super(name);
+        super(name, false);
         factor = 2;
         textSection = 0.2;
     }
@@ -19,7 +19,7 @@ public class IncreaseWordWeightFeature extends TextFeature {
      * @return
      */
     @Override
-    public String execute(String input) {
+    public String extract(String input) {
         int length = input.length();
         int startIndex = (int) ((1 - textSection) * length);
         while (input.charAt(startIndex) != '.' && input.charAt(startIndex) != ',' && input.charAt(startIndex) != '?'

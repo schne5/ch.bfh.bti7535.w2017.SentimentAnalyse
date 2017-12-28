@@ -23,14 +23,14 @@ public class NegatorFeatureTest {
 	@Test
 	public void getNoNegation() {
 		String input = "The result of this text should be zero";
-		Double result = feature.get(input);
+		Double result = feature.extract(input);
 		assertEquals(new Double(0), result);
 	}
 	
 	@Test
 	public void getNegation() {
 		String input = "I don't like this movie , but the actors are good";
-		Double result = feature.get(input);
+		Double result = feature.extract(input);
 		assertEquals(new Double(0.3), result);
 	}
 }

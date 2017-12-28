@@ -16,11 +16,7 @@ public final class IntenseWordFeature extends Feature<Integer> {
 	private HashMap<String, Integer> intenseWords;
 	
 	public IntenseWordFeature(String name) {
-		this(name, 1);
-	}
-	
-	public IntenseWordFeature(String name, int weight) {
-		super(name, weight);
+		super(name, true);
 		
         intenseWords = new HashMap<String, Integer>();
         intenseWords.put("VERY", 1);
@@ -33,7 +29,7 @@ public final class IntenseWordFeature extends Feature<Integer> {
 		intenseWords.put("TOO", 1);
 	}
 	
-	public Integer get(String input) {
+	public Integer extract(String input) {
 		int count = 0;
 		
 		try {	    

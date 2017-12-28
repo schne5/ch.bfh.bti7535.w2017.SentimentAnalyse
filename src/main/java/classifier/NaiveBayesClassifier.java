@@ -22,7 +22,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.*;
 
@@ -85,9 +84,9 @@ public class NaiveBayesClassifier implements Classifier {
         generator.addFeature(new ExclamationMarkFeature("exclamationMarks"));
         generator.addFeature(new IntenseWordFeature("intenseWords"));
 
-        //generator.addTextBasedFeature(new StopWordFeature("stopwords"));
-        generator.addTextBasedFeature(new IncreaseWordWeightFeature("wordweight"));
-       // generator.addTextBasedFeature(new IncreaseAdjectiveWeightFeature("adjective"));
+        //generator.addFeature(new StopWordFeature("stopwords"));
+        generator.addFeature(new IncreaseWordWeightFeature("wordweight"));
+       // generator.addFeature(new IncreaseAdjectiveWeightFeature("adjective"));
 
     	generator.generateFile(documents);
     	setup();

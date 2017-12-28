@@ -1,6 +1,5 @@
 package helper;
 
-import features.TextFeature;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
@@ -22,7 +21,7 @@ public class ArffFileGenerator {
 	private static final Logger LOGGER = Logger.getLogger( ArffFileGenerator.class.getName() );
 	
     ArrayList<Feature<?>> features;
-    ArrayList<TextFeature> textBasedfeatures;
+    ArrayList<Feature<?>> textBasedfeatures;
     ArrayList<Attribute> attributes;
     ArrayList<String> classValues;
 
@@ -39,6 +38,14 @@ public class ArffFileGenerator {
         Attribute text = new Attribute("text", (ArrayList<String>) null);
         attributes.add(sentiment);
         attributes.add(text);
+    }
+    
+    public List<Feature<?>> getTextBasedFeatures() {
+        return this.textBasedfeatures;
+    }
+
+    public List<Feature<?>> getFeatures() {
+        return this.features;
     }
 
     /**
@@ -61,36 +68,18 @@ public class ArffFileGenerator {
     }
 
     /**
-     * Writes the file to filesystem
-     * @param filename
-     * @param instances
-     */
-    private void writeFile(String filename, Instances instances) {
-        try {
-            Files.write(Paths.get(Constants.PATH_RESSOURCES, filename), instances.toString().getBytes());
-            Util.print(String.format("File %s written to the following location: %s", filename, Constants.PATH_RESSOURCES));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * adding a feature
      * @param feature
      */
     public void addFeature(Feature<?> feature) {
-        this.features.add(feature);
-        
-        Attribute attribute = new Attribute(feature.getName());
-        this.attributes.add(attribute);
-    }
-
-    /**
-     * adding a text- based feature
-     * @param feature
-     */
-    public void addTextBasedFeature(TextFeature feature) {
-        this.textBasedfeatures.add(feature);
+    	if (feature.getHasAttribute()) {
+    		this.features.add(feature);
+            
+            Attribute attribute = new Attribute(feature.getName());
+            this.attributes.add(attribute);    		
+    	} else {
+            this.textBasedfeatures.add(feature);
+    	}
     }
 
     /**
@@ -102,16 +91,19 @@ public class ArffFileGenerator {
         DenseInstance instance = new DenseInstance(attributes.size());
 
         //Apply text- based features on text
-        textBasedfeatures.stream().forEach(f ->{
-            d.setContent(f.execute(d.getContent()));
+        textBasedfeatures.stream().forEach(f -> {
+        	Object result = f.extract(d.getContent());
+        	if (result.getClass() == String.class) {
+        		d.setContent((String)result);
+        	}
         });
 
         instance.setValue(attributes.get(0), classValues.get(d.getGold() == Classification.POSITIVE ? 0 : 1));
         instance.setValue(attributes.get(1), d.getContent());
 
         //Add features to arff file
-        features.stream().forEach(f ->{
-            Object result = f.get(d.getContent());
+        features.stream().forEach(f -> {
+        	Object result = f.extract(d.getContent());
             if (result.getClass() == Double.class) {
                 instance.setValue(this.attributes.get(this.features.indexOf(f) + 2), (double)result);
             } else if (result.getClass() == Double.class || result.getClass() == Integer.class) {
@@ -122,12 +114,18 @@ public class ArffFileGenerator {
         });
         return instance;
     }
-
-    public List<TextFeature> getTextBasedFeatures() {
-        return this.textBasedfeatures;
-    }
-
-    public List<Feature<?>> getFeatures() {
-        return this.features;
+    
+    /**
+     * Writes the file to filesystem
+     * @param filename
+     * @param instances
+     */
+    private void writeFile(String filename, Instances instances) {
+        try {
+            Files.write(Paths.get(Constants.PATH_RESSOURCES, filename), instances.toString().getBytes());
+            Util.print(String.format("File %s written to the following location: %s", filename, Constants.PATH_RESSOURCES));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

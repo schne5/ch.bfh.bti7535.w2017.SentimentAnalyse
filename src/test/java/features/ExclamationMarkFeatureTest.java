@@ -23,14 +23,14 @@ public class ExclamationMarkFeatureTest {
 	@Test
 	public void getNoExclamationMark() {
 		String input = "This input string contains no exclamation mark";
-		Integer result = feature.get(input);
+		Integer result = feature.extract(input);
 		assertEquals(new Integer(0), result);
 	}
 	
 	@Test
 	public void getExclamationMark() {
 		String input = "The movie is good! The actors are better! !!";
-		Integer result = feature.get(input);
+		Integer result = feature.extract(input);
 		assertEquals(new Integer(4), result);
 	}
 }

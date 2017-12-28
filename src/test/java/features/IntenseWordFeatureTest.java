@@ -23,14 +23,14 @@ public class IntenseWordFeatureTest {
 	@Test
 	public void getNoIntenseWords() {
 		String input = "This input string contains no intense words";
-		Integer result = feature.get(input);
+		Integer result = feature.extract(input);
 		assertEquals(new Integer(0), result);
 	}
 	
 	@Test
 	public void getIntenseWords() {
 		String input = "This movie was very good. I will never forget the wonderful story told.";
-		Integer result = feature.get(input);
+		Integer result = feature.extract(input);
 		assertEquals(new Integer(3), result);
 	}
 }

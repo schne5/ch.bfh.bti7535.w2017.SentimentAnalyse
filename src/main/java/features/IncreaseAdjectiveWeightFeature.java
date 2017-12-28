@@ -15,11 +15,11 @@ import java.util.List;
 /**
  * Feature for increasing Adjective word weight
  */
-public class IncreaseAdjectiveWeightFeature extends TextFeature {
+public class IncreaseAdjectiveWeightFeature extends Feature<String> {
     private static Dictionary dict = null;
 
     public IncreaseAdjectiveWeightFeature(String name){
-        super(name);
+        super(name, false);
     }
 
     /**
@@ -28,7 +28,7 @@ public class IncreaseAdjectiveWeightFeature extends TextFeature {
      * @return
      */
     @Override
-    public String execute(String input) {
+    public String extract(String input) {
         List<String> words = WordStatistik.getWords(input);
         List<String> adjectives = new ArrayList<>();
         words.stream().forEach(t->{

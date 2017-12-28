@@ -6,24 +6,20 @@ package features;
  */
 public abstract class Feature<T> {
 	private String name;
-	private int weight;
+	private boolean hasAttribute;
 	
-	public Feature(String name) {
-		this(name, 1);
-	}
-	
-	public Feature(String name, int weight) {
+	public Feature(String name, boolean hasAttribute) {
 		this.name = name;
-		this.weight = weight;
+		this.hasAttribute = hasAttribute;
 	}
 	
-	public abstract T get(String input);
+	public abstract T extract(String input);
 	
 	public String getName() {
 		return this.name;
 	}
 	
-	public int getWeight() {
-		return this.weight;
+	public boolean getHasAttribute() {
+		return this.hasAttribute;
 	}
 }

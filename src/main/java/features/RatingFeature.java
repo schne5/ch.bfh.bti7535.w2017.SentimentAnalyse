@@ -13,14 +13,10 @@ public final class RatingFeature extends Feature<Double> {
 	private static final Logger LOGGER = Logger.getLogger( RatingFeature.class.getName() );
 	
 	public RatingFeature(String name) {
-		this(name, 1);
+		super(name, true);
 	}
 	
-	public RatingFeature(String name, int weight) {
-		super(name, weight);
-	}
-	
-	public Double get(String input) {
+	public Double extract(String input) {
 		List<Integer> ratings = new ArrayList<Integer>();
 		double rating = 0.5;
 		
@@ -52,9 +48,9 @@ public final class RatingFeature extends Feature<Double> {
 			percent = percent / (ratings.size() * 10);
 			
 			if (percent < 0.35) { // 0-35% => negative rating
-				rating = -1 * this.getWeight();
+				rating = -1;
 			} else if (percent > 0.65) { // 65-100% => positive rating
-				rating = 1 * this.getWeight();
+				rating = 1;
 			} else { // 35-65% => neutral rating
 				rating = 0;
 			}

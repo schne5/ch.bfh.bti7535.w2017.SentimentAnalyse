@@ -10,8 +10,8 @@ import java.util.List;
 public class BadWordSetFeature extends Feature<Double>{
     private List<String> wordList;
 
-    public BadWordSetFeature(String name) {
-        super(name);
+    public BadWordSetFeature(String name, boolean hasAttribute) {
+        super(name, true);
     }
 
     /**
@@ -20,7 +20,7 @@ public class BadWordSetFeature extends Feature<Double>{
      * @return
      */
     @Override
-    public Double get(String input) {
+    public Double extract(String input) {
         String content = input;
         int[] count = new int[1];
         HashMap<String,Integer> words =WordStatistik.countWords(content,false);

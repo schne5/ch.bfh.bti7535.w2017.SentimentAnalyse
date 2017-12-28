@@ -15,14 +15,10 @@ public final class NegatorFeature extends Feature<Double> {
 	private static List<Character> punctuations = new ArrayList<Character>(Arrays.asList('.', '.', ',', '?', '!', ';'));
 	
 	public NegatorFeature(String name) {
-		this(name, 1);
+		super(name, true);
 	}
 	
-	public NegatorFeature(String name, int weight) {
-		super(name, weight);
-	}
-	
-	public Double get(String input) {
+	public Double extract(String input) {
 		StringBuilder sb = new StringBuilder();
 		
 		Boolean addNotPrefix = false;
