@@ -8,17 +8,17 @@ import java.util.logging.Logger;
 
 // TODO: include brackets as well
 // TODO: can we still use the negated text, or do we use the count only?
-public final class NegatorFeature extends Feature<Double> {
+public final class NegatorFeature extends Feature<String> {
 	private static final Logger LOGGER = Logger.getLogger( NegatorFeature.class.getName() );
 	
 	private static List<String> negations = new ArrayList<String>(Arrays.asList("n't", "not", "no", "never"));;
-	private static List<Character> punctuations = new ArrayList<Character>(Arrays.asList('.', '.', ',', '?', '!', ';'));
+	private static List<String> punctuations = new ArrayList<String>(Arrays.asList(".", ".", ",", "?", "!", ";", "but"));
 	
 	public NegatorFeature(String name) {
-		super(name, true);
+		super(name, false);
 	}
 	
-	public Double extract(String input) {
+	public String extract(String input) {
 		StringBuilder sb = new StringBuilder();
 		
 		Boolean addNotPrefix = false;
@@ -35,7 +35,7 @@ public final class NegatorFeature extends Feature<Double> {
 					continue;
 				}
 				
-				if (punctuations.contains(word.charAt(word.length() -1))) {
+				if (punctuations.contains(word)) {
 					isPunctuation = true;
 					isNegation = false;
 					addNotPrefix = false;
@@ -61,6 +61,8 @@ public final class NegatorFeature extends Feature<Double> {
 			LOGGER.log(Level.SEVERE, e.toString());
 		}
 		
-		return (double)negatedWordsCount / (totalWordsCount == 0 ? 1 : totalWordsCount);
+		return sb.toString().trim();
+		
+		//return (double)negatedWordsCount / (totalWordsCount == 0 ? 1 : totalWordsCount);
 	}
 }

@@ -6,13 +6,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ExclamationMarkFeatureTest {
+public class CharacterOccurenceFeatureTest {
 
-	private ExclamationMarkFeature feature;
+	private CharacterOccurenceFeature feature;
 	
 	@Before
     public void setUp() throws Exception {
-		feature = new ExclamationMarkFeature("exclamationMarks");
+		feature = new CharacterOccurenceFeature("exclamationMark", '!');
     }   
 	
     @After

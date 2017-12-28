@@ -23,14 +23,21 @@ public class NegatorFeatureTest {
 	@Test
 	public void getNoNegation() {
 		String input = "The result of this text should be zero";
-		Double result = feature.extract(input);
-		assertEquals(new Double(0), result);
+		String result = feature.extract(input);
+		assertEquals(input, result);
 	}
 	
 	@Test
-	public void getNegation() {
+	public void getNegationWithPunctuation() {
 		String input = "I don't like this movie , but the actors are good";
-		Double result = feature.extract(input);
-		assertEquals(new Double(0.3), result);
+		String result = feature.extract(input);
+		assertEquals("I don't NOT_like NOT_this NOT_movie , but the actors are good", result);
+	}
+	
+	@Test
+	public void getNegationWithBut() {
+		String input = "I don't like this movie but the actors are good";
+		String result = feature.extract(input);
+		assertEquals("I don't NOT_like NOT_this NOT_movie but the actors are good", result);
 	}
 }

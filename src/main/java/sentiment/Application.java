@@ -29,8 +29,9 @@ public class Application {
                 ArffFileGenerator generator = new ArffFileGenerator();
                 //generator.addFeature(new NegatorFeature("negator"));
                 generator.addFeature(new RatingFeature("rating"));
-                generator.addFeature(new ExclamationMarkFeature("exclamationMarks"));
-                //generator.addFeature(new IntenseWordFeature("intenseWords"));
+                generator.addFeature(new CharacterOccurenceFeature("exclamationMark", '!'));
+                generator.addFeature(new CharacterOccurenceFeature("questionMark", '?'));
+//                generator.addFeature(new IntenseWordFeature("intenseWords"));
                 //generator.addFeature(new StopWordFeature("stopwords"));
                 generator.addFeature(new IncreaseWordWeightFeature("wordweight"));
                 //generator.addFeature(new IncreaseAdjectiveWeightFeature("adjective"));
