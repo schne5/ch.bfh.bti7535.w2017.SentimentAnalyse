@@ -45,6 +45,6 @@ public final class IntenseWordFeature extends Feature<Integer> {
 			LOGGER.log(Level.SEVERE, e.toString());
 		}
 		
-		return count > 10 ? 1 : 0;
+		return count;
 	}
 }

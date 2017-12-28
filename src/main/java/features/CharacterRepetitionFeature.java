@@ -30,7 +30,7 @@ public final class CharacterRepetitionFeature extends Feature<Integer> {
 			}
 			
 			if (currentChar.equals(this.character) && previousChar.equals(currentChar)) {
-				return 1; //hint: if we increase count the accuracy will be worse
+				count++;
 			}
 			
 			previousChar = input.charAt(i);
