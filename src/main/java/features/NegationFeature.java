@@ -8,13 +8,13 @@ import java.util.logging.Logger;
 
 // TODO: include brackets as well
 // TODO: can we still use the negated text, or do we use the count only?
-public final class NegatorFeature extends Feature<String> {
-	private static final Logger LOGGER = Logger.getLogger( NegatorFeature.class.getName() );
+public final class NegationFeature extends Feature<String> {
+	private static final Logger LOGGER = Logger.getLogger( NegationFeature.class.getName() );
 	
 	private static List<String> negations = new ArrayList<String>(Arrays.asList("n't", "not", "no", "never"));;
 	private static List<String> punctuations = new ArrayList<String>(Arrays.asList(".", ".", ",", "?", "!", ";", "but"));
 	
-	public NegatorFeature(String name) {
+	public NegationFeature(String name) {
 		super(name, false);
 	}
 	

@@ -6,13 +6,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class NegatorFeatureTest {
+public class NegationFeatureTest {
 
-	private NegatorFeature feature;
+	private NegationFeature feature;
 	
 	@Before
     public void setUp() throws Exception {
-		feature = new NegatorFeature("negator");
+		feature = new NegationFeature("negator");
     }   
 	
     @After

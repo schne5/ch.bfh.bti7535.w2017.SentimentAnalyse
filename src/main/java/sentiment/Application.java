@@ -27,11 +27,14 @@ public class Application {
                 classifier = new BaseLineClassifier();
             } else if(args[0].equals(Constants.NAIVE_BAYES)) {
                 ArffFileGenerator generator = new ArffFileGenerator();
-                //generator.addFeature(new NegatorFeature("negator"));
+                //generator.addFeature(new NegationFeature("negation"));
                 generator.addFeature(new RatingFeature("rating"));
-                generator.addFeature(new CharacterOccurenceFeature("exclamationMark", '!'));
-                generator.addFeature(new CharacterOccurenceFeature("questionMark", '?'));
-//                generator.addFeature(new IntenseWordFeature("intenseWords"));
+                //generator.addFeature(new CharacterOccurenceFeature("exclamationMark", '!'));
+                //generator.addFeature(new CharacterOccurenceFeature("questionMark", '?'));
+                //generator.addFeature(new CharacterRepetitionFeature("exclamationMarkRepetition", '!'));
+                //generator.addFeature(new IntenseWordFeature("intenseWords"));
+                generator.addFeature(new BadWordSetFeature("badwords"));
+                generator.addFeature(new GoodWordSetFeature("goodwords"));
                 //generator.addFeature(new StopWordFeature("stopwords"));
                 generator.addFeature(new IncreaseWordWeightFeature("wordweight"));
                 //generator.addFeature(new IncreaseAdjectiveWeightFeature("adjective"));

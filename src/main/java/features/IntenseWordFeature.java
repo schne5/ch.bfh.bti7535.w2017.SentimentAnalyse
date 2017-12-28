@@ -23,9 +23,9 @@ public final class IntenseWordFeature extends Feature<Integer> {
         intenseWords.put("MORE", 1);
         intenseWords.put("MOST", 2);
 		intenseWords.put("LESS", 1);
-		intenseWords.put("LEAST", 1);
-		intenseWords.put("ALWAYS", 1);
-		intenseWords.put("NEVER", 1);
+		intenseWords.put("LEAST", 2);
+		intenseWords.put("ALWAYS", 2);
+		intenseWords.put("NEVER", 2);
 		intenseWords.put("TOO", 1);
 	}
 	

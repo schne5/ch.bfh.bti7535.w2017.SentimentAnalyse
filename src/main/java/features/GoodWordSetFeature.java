@@ -5,17 +5,17 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Feature that counts bad words
+ * Feature that counts good words
  */
-public class BadWordSetFeature extends Feature<Double>{
+public class GoodWordSetFeature extends Feature<Double>{
     private List<String> wordList;
 
-    public BadWordSetFeature(String name) {
+    public GoodWordSetFeature(String name) {
         super(name, true);
     }
 
     /**
-     * counts the bad words in a string
+     * counts the good words in a string
      * @param input
      * @return
      */
@@ -32,30 +32,29 @@ public class BadWordSetFeature extends Feature<Double>{
     }
 
     /**
-     * Returns a list with bad words
+     * Returns a list with good words
      * @return
      */
     private List<String> getWordList() {
         if (wordList == null) {
             wordList = Arrays.asList(
-            		//"atrocious",
-            		"bad", 
-            		"boring", 
-            		"confused",
-            		"confusing",
-            		//"dull",
-            		//"failure",
-                    "lame", 
-                    "mess", 
-                    //"poor",
-                    "redundant",
-                    "stupid", 
-                    "tired",
-                    //"uninspired",
-                    "waste",
-                    "worse", 
-                    "worst" 
-                    );
+            		"amazing", 
+            		"better",
+            		"best",
+            		"brilliant",
+            		"excellent",
+            		"exceptional",
+            		"great",
+            		"hilarious",
+            		"good",
+            		"marvelous",
+            		"outstanding",
+            		"phenomenal",
+            		"stunning",
+            		"terrific",
+            		"thrilling",
+            		"wonderful"
+            		);
         }
         
         return wordList;

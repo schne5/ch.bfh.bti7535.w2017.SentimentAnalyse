@@ -57,6 +57,7 @@ public final class RatingFeature extends Feature<Double> {
 		} catch(Exception e) {
 			LOGGER.log(Level.SEVERE, e.toString());
 		}
+		
 		return rating;
 	}
 }
