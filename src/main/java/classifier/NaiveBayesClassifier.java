@@ -2,7 +2,6 @@ package classifier;
 
 import helper.Document;
 import helper.Util;
-import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
 import weka.classifiers.evaluation.Evaluation;
@@ -13,12 +12,14 @@ import weka.core.stemmers.LovinsStemmer;
 import weka.core.tokenizers.NGramTokenizer;
 import weka.filters.Filter;
 import weka.filters.MultiFilter;
+import weka.filters.supervised.attribute.AttributeSelection;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.*;
 
@@ -60,8 +61,9 @@ public class NaiveBayesClassifier implements Classifier {
         MultiFilter multiFilter = new MultiFilter();
         Filter[] filters = new Filter[1];
         filters[0] = vectorFilter;
-        //filters[1] =getASFilter();
-        multiFilter.setFilters(filters);
+
+        multiFilter.setFilters(new Filter[] {vectorFilter});
+
 
         this.filteredBayes.setClassifier(new weka.classifiers.bayes.NaiveBayes());
         this.filteredBayes.setFilter(multiFilter);
@@ -86,7 +88,7 @@ public class NaiveBayesClassifier implements Classifier {
     		LOGGER.log(Level.SEVERE, msg);
     		throw new Exception(msg);
     	}
-        //Collections.shuffle(documents);
+        Collections.shuffle(documents);
     	
     	setup();
 

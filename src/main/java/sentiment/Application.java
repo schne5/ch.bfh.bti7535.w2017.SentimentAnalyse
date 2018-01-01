@@ -4,10 +4,7 @@ import classifier.Classifier;
 import classifier.BaseLineClassifier;
 import classifier.NaiveBayesClassifier;
 import features.*;
-import helper.ArffFileGenerator;
-import helper.Constants;
-import helper.Document;
-import helper.Util;
+import helper.*;
 
 import java.util.List;
 
@@ -20,8 +17,8 @@ public class Application {
         Classifier classifier = null;
         List<Document> documents = Util.getAllDocuments();
         //TODO: whats the purpose of this? Classifier will always be NB no matter what arguments are passed in
-        //args = new String[1];  
-        //args[0]= Constants.NAIVE_BAYES;
+        args = new String[1];
+        args[0]= Constants.NAIVE_BAYES;
         if (args.length > 0) {
             if (args[0].equals(Constants.BASELINE)) {
                 classifier = new BaseLineClassifier();
@@ -38,7 +35,8 @@ public class Application {
                 //generator.addFeature(new StopWordFeature("stopwords"));
                 generator.addFeature(new IncreaseWordWeightFeature("wordweight"));
                 //generator.addFeature(new IncreaseAdjectiveWeightFeature("adjective"));
-                
+                generator.addFeature(new PositiveInfoFeature("posInfo",documents));
+                generator.addFeature(new NegativeInfoFeature("negInfo",documents));
                 generator.generateFile(documents, Constants.PATH_RESSOURCES, Constants.FILE_NAME_REVIEW);
                 
                 classifier = new NaiveBayesClassifier(Constants.PATH_RESSOURCES, Constants.FILE_NAME_REVIEW);

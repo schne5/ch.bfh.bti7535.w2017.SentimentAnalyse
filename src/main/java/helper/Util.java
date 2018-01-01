@@ -16,92 +16,109 @@ import java.util.List;
  */
 public final class Util {
 
-	private Util(){}
+    private Util() {
+    }
 
-	/**
-	 * write time stamp and value to standard output stream
-	 * @param value Value to write
-	 */
-	public static void print(String value) {
-		String timeStamp = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date());
-		System.out.format("%s: %s %n", timeStamp, value);
-	}
+    /**
+     * write time stamp and value to standard output stream
+     *
+     * @param value Value to write
+     */
+    public static void print(String value) {
+        String timeStamp = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date());
+        System.out.format("%s: %s %n", timeStamp, value);
+    }
 
-	/**
-	 * Returns a List of documents, containing filename, classification and content
-	 * @return
-	 */
-	public static List<Document> getAllDocuments(){
-		List<Document> documents = new ArrayList<Document>();
-		List<String> filesPositive = readAllFileNames(Constants.PATH_POSITIVE);
-		List<String> filesNegative = readAllFileNames(Constants.PATH_NEGATIVE);
-		filesPositive.stream().forEach(f -> {
-			documents.add(new Document(f,Classification.POSITIVE,getContentFromFile(f,true)));
-		});
-		filesNegative.stream().forEach(f -> {
-			documents.add(new Document(f,Classification.NEGATIVE,getContentFromFile(f,false)));
-		});
-		return documents;
-	}
+    /**
+     * Returns a List of documents, containing filename, classification and content
+     *
+     * @return
+     */
+    public static List<Document> getAllDocuments() {
+        List<Document> documents = new ArrayList<Document>();
+        documents.addAll(getDocumentsOfClass(Classification.POSITIVE));
+        documents.addAll(getDocumentsOfClass(Classification.NEGATIVE));
+        return documents;
+    }
 
-	/**
-	 * Reads all filenames, containing in folder
-	 * @param path
-	 * @return
-	 */
-	private static List<String> readAllFileNames(String path) {
-		File folder = new File(path);
-		File[] files = folder.listFiles();
-		List<String> fileNames = new ArrayList<String>();
+    /**
+     * Returns all Documents with given Classification
+     * @param cl
+     * @return
+     */
+    public static List<Document> getDocumentsOfClass(Classification cl) {
+        List<Document> documents = new ArrayList<Document>();
+        List<String> files = readAllFileNames(cl == Classification.NEGATIVE ? Constants.PATH_NEGATIVE : Constants.PATH_POSITIVE);
 
-		Arrays.stream(files).forEach(file->{
-			if (file.isFile()) {
-				fileNames.add(file.getName());
-			}
-		});
-		return fileNames;
-	}
+        files.stream().forEach(f -> {
+            documents.add(new Document(f, cl, getContentFromFile(f, cl == Classification.POSITIVE ? true : false)));
+        });
 
-	/**
-	 * Returns the content of a file as String
-	 * @param filename
-	 * @param positive
-	 * @return
-	 */
-	private static String getContentFromFile(String filename, boolean positive) {
-		StringBuilder sb = new StringBuilder();
-		List<String> lines = null;
-		try {
-			lines = Files
+        return documents;
+    }
+
+
+    /**
+     * Reads all filenames, containing in folder
+     *
+     * @param path
+     * @return
+     */
+    private static List<String> readAllFileNames(String path) {
+        File folder = new File(path);
+        File[] files = folder.listFiles();
+        List<String> fileNames = new ArrayList<String>();
+
+        Arrays.stream(files).forEach(file -> {
+            if (file.isFile()) {
+                fileNames.add(file.getName());
+            }
+        });
+        return fileNames;
+    }
+
+    /**
+     * Returns the content of a file as String
+     *
+     * @param filename
+     * @param positive
+     * @return
+     */
+    private static String getContentFromFile(String filename, boolean positive) {
+        StringBuilder sb = new StringBuilder();
+        List<String> lines = null;
+        try {
+            lines = Files
                     .readAllLines(Paths.get(positive ? Constants.PATH_POSITIVE : Constants.PATH_NEGATIVE, filename));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		lines.stream().forEach(line -> {
-			sb.append(line);
-		});
-		return sb.toString();
-	}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        lines.stream().forEach(line -> {
+            sb.append(line);
+        });
+        return sb.toString();
+    }
 
-	/**
-	 * Returns the content of a file as a list of strings
-	 * @param file
-	 * @return
-	 */
-		public static List<String> fileToList(Path file) {
-			List<String> list = new ArrayList<String>();
-			String[] lineArray;
-			try {
-				List<String> lines = Files.readAllLines(file);
-				for (String line : lines) {
-					lineArray = (line.split(" "));
-					for (String s : lineArray) {
-						list.add(s);
-					}
-				}
-			} catch (IOException e) {
-				System.out.println("File not readable");
-			}
-			return list;
-		}
-	}
+    /**
+     * Returns the content of a file as a list of strings
+     *
+     * @param file
+     * @return
+     */
+    public static List<String> fileToList(Path file) {
+        List<String> list = new ArrayList<String>();
+        String[] lineArray;
+        try {
+            List<String> lines = Files.readAllLines(file);
+            for (String line : lines) {
+                lineArray = (line.split(" "));
+                for (String s : lineArray) {
+                    list.add(s);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("File not readable");
+        }
+        return list;
+    }
+}

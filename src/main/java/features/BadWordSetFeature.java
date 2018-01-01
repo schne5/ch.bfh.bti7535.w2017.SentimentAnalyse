@@ -54,7 +54,17 @@ public class BadWordSetFeature extends Feature<Double>{
                     //"uninspired",
                     "waste",
                     "worse", 
-                    "worst" 
+                    "worst" ,
+                    "loveless",
+                    "degenerates",
+                    "psychlos",
+                    "horrid",
+                    "stigmata"
+                    ,"kip"
+                    ,"sphere",
+                    "grinch",
+                    "switchback"
+                    ,"hawk"
                     );
         }
         
