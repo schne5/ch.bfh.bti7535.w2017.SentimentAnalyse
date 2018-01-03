@@ -10,7 +10,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Class for counting positive and negative words

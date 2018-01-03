@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-// TODO: include brackets as well
-// TODO: can we still use the negated text, or do we use the count only?
+/**
+ * Feature for negating an input string
+ */
 public final class NegationFeature extends Feature<String> {
 	private static final Logger LOGGER = Logger.getLogger( NegationFeature.class.getName() );
 	
@@ -25,8 +26,8 @@ public final class NegationFeature extends Feature<String> {
 		Boolean isNegation = false;
 		Boolean isPunctuation = false;
 		
-		int totalWordsCount = 0;
-		int negatedWordsCount = 0;
+//		int totalWordsCount = 0;
+//		int negatedWordsCount = 0;
 		
 		try {	    
 	        String[] words = input.split(" ");
@@ -43,14 +44,14 @@ public final class NegationFeature extends Feature<String> {
 				else if (word.endsWith(negations.get(0)) || word.endsWith(negations.get(1))) {
 					isPunctuation = false;
 					isNegation = true;
-					totalWordsCount++;
+//					totalWordsCount++;
 				} else {
-					totalWordsCount++;
+//					totalWordsCount++;
 				}
 				
 				if (addNotPrefix) {
 					sb.append("NOT_");	
-					negatedWordsCount++;
+//					negatedWordsCount++;
 				}
 				
 				sb.append(word + " ");

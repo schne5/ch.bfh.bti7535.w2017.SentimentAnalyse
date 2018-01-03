@@ -9,7 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import features.Feature;
 
@@ -17,8 +16,6 @@ import features.Feature;
  * Generates the arff file used for naive bayes classification
  */
 public class ArffFileGenerator {
-	
-	private static final Logger LOGGER = Logger.getLogger( ArffFileGenerator.class.getName() );
 	
     ArrayList<Feature<?>> features;
     ArrayList<Feature<?>> textBasedfeatures;

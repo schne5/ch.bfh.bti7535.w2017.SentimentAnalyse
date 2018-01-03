@@ -2,6 +2,9 @@ package helper;
 
 import java.util.*;
 
+/**
+ * counts all words in an input string 
+ */
 public class WordStatistik {
     public static HashMap<String, Integer> countWords(String text, boolean uppercase) {
         StringTokenizer tokenizer = new StringTokenizer(text, "\n\"-+,&%$§.;:?!(){}[]1234567890*@ ");

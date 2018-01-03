@@ -47,7 +47,6 @@ public class TF_IDF_Feature {
                 List<String> lines = Files.readAllLines(Paths.get(files.get(file) ? Constants.PATH_POSITIVE : Constants.PATH_NEGATIVE, file));
                 List<String> words = WordStatistik.getWords(lines);
                 //Remove stop words
-                //TODO: Here perhaps negation feature
                 //List with frequency of each word
                 HashMap<String, Integer> wordStatistik = new HashMap<String, Integer>();
                 for (String word : words) {

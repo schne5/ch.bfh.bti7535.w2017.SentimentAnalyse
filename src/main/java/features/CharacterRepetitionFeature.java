@@ -1,13 +1,9 @@
 package features;
 
-import java.util.logging.Logger;
-
 /**
  * Feature counting all repetitions of a certain character in a string
  */
 public final class CharacterRepetitionFeature extends Feature<Integer> {
-	
-	private static final Logger LOGGER = Logger.getLogger( CharacterRepetitionFeature.class.getName() );
 	
 	private Character character;
 	
@@ -36,6 +32,6 @@ public final class CharacterRepetitionFeature extends Feature<Integer> {
 			previousChar = input.charAt(i);
 		}
 		
-		return count;
+		return count > 0 ? 1 : 0;
 	}
 }

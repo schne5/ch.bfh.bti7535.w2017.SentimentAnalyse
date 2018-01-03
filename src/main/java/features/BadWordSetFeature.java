@@ -58,13 +58,13 @@ public class BadWordSetFeature extends Feature<Double>{
                     "loveless",
                     "degenerates",
                     "psychlos",
-                    "horrid",
-                    "stigmata"
-                    ,"kip"
-                    ,"sphere",
-                    "grinch",
-                    "switchback"
-                    ,"hawk"
+                    "horrid"
+//                    "stigmata"
+//                    ,"kip"
+//                    ,"sphere",
+//                    "grinch",
+//                    "switchback"
+//                    ,"hawk"
                     );
         }
         

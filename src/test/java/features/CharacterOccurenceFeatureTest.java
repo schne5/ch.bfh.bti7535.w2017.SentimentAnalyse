@@ -31,6 +31,6 @@ public class CharacterOccurenceFeatureTest {
 	public void getExclamationMark() {
 		String input = "The movie is good! The actors are better! !!";
 		Integer result = feature.extract(input);
-		assertEquals(new Integer(4), result);
+		assertEquals(new Integer(1), result);
 	}
 }

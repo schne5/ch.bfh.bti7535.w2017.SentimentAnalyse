@@ -1,13 +1,15 @@
 package sentiment;
 
-import classifier.Classifier;
+import java.util.List;
+
 import classifier.BaseLineClassifier;
+import classifier.Classifier;
 import classifier.NaiveBayesClassifier;
 import features.*;
-import helper.*;
-
-import java.util.Collections;
-import java.util.List;
+import helper.ArffFileGenerator;
+import helper.Constants;
+import helper.Document;
+import helper.Util;
 
 /**
  * Class containing main method
@@ -17,26 +19,24 @@ public class Application {
     public static void main(String[] args) throws Exception {
         Classifier classifier = null;
         List<Document> documents = Util.getAllDocuments();
-       // Collections.shuffle(documents);
-        //TODO: whats the purpose of this? Classifier will always be NB no matter what arguments are passed in
-        args = new String[1];
-        args[0]= Constants.NAIVE_BAYES;
+        
         if (args.length > 0) {
             if (args[0].equals(Constants.BASELINE)) {
                 classifier = new BaseLineClassifier();
             } else if(args[0].equals(Constants.NAIVE_BAYES)) {
                 ArffFileGenerator generator = new ArffFileGenerator();
-                //generator.addFeature(new NegationFeature("negation"));
-                generator.addFeature(new RatingFeature("rating"));
-                //generator.addFeature(new CharacterOccurenceFeature("exclamationMark", '!'));
-                //generator.addFeature(new CharacterOccurenceFeature("questionMark", '?'));
-                //generator.addFeature(new CharacterRepetitionFeature("exclamationMarkRepetition", '!'));
-                //generator.addFeature(new IntenseWordFeature("intenseWords"));
+//                generator.addFeature(new NegationFeature("negation")); // negative impact
+//                generator.addFeature(new RatingFeature("@@rating")); // negative impact
+                generator.addFeature(new CharacterOccurenceFeature("exclamationMark", '!'));
+                generator.addFeature(new CharacterOccurenceFeature("questionMark", '?'));
+                generator.addFeature(new CharacterRepetitionFeature("exclamationMarkRepetition", '!')); 
+                generator.addFeature(new CharacterRepetitionFeature("questionMarkRepetition", '?')); 
+                generator.addFeature(new IntenseWordFeature("intenseWords")); 
                 generator.addFeature(new BadWordSetFeature("badwords"));
                 generator.addFeature(new GoodWordSetFeature("goodwords"));
-                //generator.addFeature(new StopWordFeature("stopwords"));
+//                generator.addFeature(new StopWordFeature("stopwords")); // negative impact 
                 generator.addFeature(new IncreaseWordWeightFeature("wordweight"));
-                //generator.addFeature(new IncreaseAdjectiveWeightFeature("adjective"));
+//                generator.addFeature(new IncreaseAdjectiveWeightFeature("adjective")); // no impact, bad performance
                 generator.addFeature(new PositiveInfoFeature("posInfo",documents));
                 generator.addFeature(new NegativeInfoFeature("negInfo",documents));
                 generator.generateFile(documents, Constants.PATH_RESSOURCES, Constants.FILE_NAME_REVIEW);

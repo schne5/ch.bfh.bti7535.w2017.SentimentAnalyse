@@ -6,7 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class CharacterRepetionFeatureTest {
+public class CharacterRepetitionFeatureTest {
 
 	private CharacterRepetitionFeature feature;
 	
@@ -31,6 +31,6 @@ public class CharacterRepetionFeatureTest {
 	public void getExclamationMark() {
 		String input = "The movie is good!! The actors are better! ! !";
 		Integer result = feature.extract(input);
-		assertEquals(new Integer(3), result);
+		assertEquals(new Integer(1), result);
 	}
 }

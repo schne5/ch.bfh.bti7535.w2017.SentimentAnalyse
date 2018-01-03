@@ -1,9 +1,16 @@
 package classifier;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import helper.Document;
 import helper.Util;
-import weka.attributeSelection.InfoGainAttributeEval;
-import weka.attributeSelection.Ranker;
 import weka.classifiers.evaluation.Evaluation;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.core.Instances;
@@ -12,16 +19,7 @@ import weka.core.stemmers.LovinsStemmer;
 import weka.core.tokenizers.NGramTokenizer;
 import weka.filters.Filter;
 import weka.filters.MultiFilter;
-import weka.filters.supervised.attribute.AttributeSelection;
 import weka.filters.unsupervised.attribute.StringToWordVector;
-
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.logging.*;
 
 /**
  * Naive Bayes Classification Algorithm
@@ -106,7 +104,8 @@ public class NaiveBayesClassifier implements Classifier {
             average += correctRate;
             Util.print(String.format("Accuracy in round %d of %d: %f %%", n + 1, numFolds, correctRate));
         }
-        Util.print(String.format("Average result %f %%",average / numFolds));
+        
+        Util.print(String.format("Average result %f %%", average / numFolds));
         Util.print("Finished cross validation");
     }
 
@@ -154,27 +153,10 @@ public class NaiveBayesClassifier implements Classifier {
         filter.setWordsToKeep(50000);
         filter.setLowerCaseTokens(true);
         filter.setMinTermFreq(2);
-        LovinsStemmer stem = new LovinsStemmer();
-        filter.setStemmer(stem);
+//        LovinsStemmer stem = new LovinsStemmer();
+//        filter.setStemmer(stem); // negative impact
         filter.setIDFTransform(true);
-        filter.setTokenizer(getNgramTokenizer(3));
-        return filter;
-    }
-
-    /**
-     * Setup AS-filter
-     * @return
-     */
-    private static AttributeSelection getASFilter() {
-        AttributeSelection filter = new AttributeSelection();
-
-        InfoGainAttributeEval ev = new InfoGainAttributeEval();
-        Ranker ranker = new Ranker();
-        ranker.setNumToSelect(1000);
-
-        filter.setEvaluator(ev);
-        filter.setSearch(ranker);
-
+//        filter.setTokenizer(getNgramTokenizer(3)); // negative impact
         return filter;
     }
 }

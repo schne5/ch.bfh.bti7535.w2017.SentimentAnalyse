@@ -1,15 +1,13 @@
 package features;
 
-import helper.Constants;
-import helper.Util;
-
-import java.io.FileReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.StringTokenizer;
+
+import helper.Constants;
+import helper.Util;
 
 /**
  * Feature for removing stop words
@@ -49,6 +47,7 @@ public class StopWordFeature extends Feature<String> {
 		return cleandList;
 	}
 
+	@SuppressWarnings("unused")
 	private static String removeWords(List<String> toRemove, String removeFrom) {
 		String[] textArray = (removeFrom.split(" "));
 		HashMap<Integer, String> hm = new HashMap<Integer, String>();

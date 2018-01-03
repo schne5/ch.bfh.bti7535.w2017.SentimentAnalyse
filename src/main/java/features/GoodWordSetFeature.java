@@ -55,14 +55,14 @@ public class GoodWordSetFeature extends Feature<Double>{
             		"thrilling",
             		"wonderful",
                     "lovingly",
-                    "masterfully",
-                    "ideals",
-                    "chocolat",
-                    "ideology",
-                    "sweetback",
-                    "melancholy",
-                    "dalai",
-                    "lama"
+                    "masterfully"
+//                    "ideals",
+//                    "chocolat",
+//                    "ideology",
+//                    "sweetback",
+//                    "melancholy",
+//                    "dalai",
+//                    "lama"
             		);
         }
         
