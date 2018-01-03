@@ -88,6 +88,7 @@ public class NaiveBayesClassifier implements Classifier {
     		LOGGER.log(Level.SEVERE, msg);
     		throw new Exception(msg);
     	}
+    	//Shuffle documents for reaching the same distribution of pos and negative documents
         Collections.shuffle(documents);
     	
     	setup();

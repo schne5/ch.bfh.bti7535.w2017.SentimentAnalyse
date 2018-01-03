@@ -36,8 +36,19 @@ public final class Util {
      */
     public static List<Document> getAllDocuments() {
         List<Document> documents = new ArrayList<Document>();
-        documents.addAll(getDocumentsOfClass(Classification.POSITIVE));
-        documents.addAll(getDocumentsOfClass(Classification.NEGATIVE));
+        List<Document> posDocuments = getDocumentsOfClass(Classification.POSITIVE);
+        List<Document> negDocuments = getDocumentsOfClass(Classification.NEGATIVE);
+        int k=0;
+        for(int i=0; i<(posDocuments.size()+ posDocuments.size()); i++){
+            if(i!=0 && i % 2 ==0)
+                k++;
+            if(i%2==0){
+                documents.add(posDocuments.get(k));
+            }else{
+                documents.add(negDocuments.get(k));
+            }
+
+        }
         return documents;
     }
 

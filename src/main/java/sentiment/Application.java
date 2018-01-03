@@ -6,6 +6,7 @@ import classifier.NaiveBayesClassifier;
 import features.*;
 import helper.*;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,6 +17,7 @@ public class Application {
     public static void main(String[] args) throws Exception {
         Classifier classifier = null;
         List<Document> documents = Util.getAllDocuments();
+       // Collections.shuffle(documents);
         //TODO: whats the purpose of this? Classifier will always be NB no matter what arguments are passed in
         args = new String[1];
         args[0]= Constants.NAIVE_BAYES;
