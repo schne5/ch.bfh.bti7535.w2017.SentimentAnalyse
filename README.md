@@ -1,27 +1,6 @@
 # Sentiment Analyse
 
-...
-
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
-### Prerequisites
-
-* Java 8 or higher
-* ...
-
-### Installing
-
-...
-
-## Running the Tests
-
-...
-
-## Deployment
-
-...
+This Java program will analyze the polarity of IMDB movie reviews, whether they are positive or negative. It is implemented using the Naive Bayes classifier with our own features as well as the baseline algorithm.
 
 ## Built With
 
